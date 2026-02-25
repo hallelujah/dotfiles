@@ -16,10 +16,6 @@ opt.laststatus = 2
 opt.autowrite = true
 opt.modeline = false
 
--- Custom runtime path for vim_compat
-local vim_compat_path = vim.fn.expand("~/.config/nvim/vim_compat")
-opt.rtp:prepend(vim_compat_path)
-opt.rtp:append(vim_compat_path .. "/after")
 
 opt.tabstop = 2
 opt.shiftwidth = 2

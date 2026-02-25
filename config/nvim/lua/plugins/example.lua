@@ -6,6 +6,7 @@ return {
       colorscheme = "snazzy",
     },
   },
+  { "rktjmp/lush.nvim" },
   { "alexwu/nvim-snazzy" },
   -- Additional plugins from the original plugins.vim
   { "christoomey/vim-run-interactive" },

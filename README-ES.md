@@ -73,8 +73,8 @@ Pon tus modificaciones en `~/dotfiles-local` anexado con `.local`:
 * `~/dotfiles-local/psqlrc.local` (proveemos `.psqlrc.local` en blanco para prevenir que `psql`
   arroje un error, pero debes sobreescribir el archivo con tu propia copia)
 * `~/dotfiles-local/tmux.conf.local`
-* `~/dotfiles-local/init.vim.local`
-* `~/dotfiles-local/plugins.vim.local`
+* `~/dotfiles-local/init.vim.local` (Vimscript) o `~/dotfiles-local/init.lua.local` (Lua)
+* `~/dotfiles-local/lua/plugins/*.lua` (para plugins personalizados)
 * `~/dotfiles-local/zshrc.local`
 * `~/dotfiles-local/zsh/configs/*`
 
@@ -100,22 +100,12 @@ Tu `~/dotfiles-local/init.vim.local` tal vez se vea así:
     highlight NonText guibg=#060606
     highlight Folded  guibg=#0A0A0A guifg=#9090D0
 
-Si prefieres prevenir la instalación de un plugin predeterminado de nvim en `config/nvim/plugins.vim`,
-puedes ignorarlo sacándolo con `UnPlug` en tu `~/dotfiles-local/plugins.vim.local`.
+Si prefieres prevenir la instalación de un plugin predeterminado de nvim, puedes desactivarlo en tu `~/dotfiles-local/lua/plugins/`.
 
-    " Don't install vim-scripts/tComment
-    UnPlug 'tComment'
-
-`UnPlug` puede ser usado para instalar tu propio fork de un plugin o para instalar
-un plugin compartido con opciones personalizadas distintas.
-
-    " Only load vim-coffee-script if a Coffeescript buffer is created
-    UnPlug 'vim-coffee-script'
-    Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
-
-    " Use a personal fork of vim-run-interactive
-    UnPlug 'vim-run-interactive'
-    Plug '$HOME/plugins/vim-run-interactive'
+    -- Ejemplo para desactivar un plugin
+    return {
+      { "nombre-del-plugin", enabled = false },
+    }
 
 Para extender tus `git` hooks, crea scripts ejecutables en
 `~/dotfiles-local/git_template.local/hooks/*` files.
@@ -179,7 +169,7 @@ sin importar de nombre del archivo:
 ¿Qué viene incluido?
 -----------------
 
-Configuración [nvim](https://neovim.io/):
+Configuración [nvim](https://neovim.io/) (ahora usando [LazyVim](https://www.lazyvim.org)):
 
 * [fzf](https://github.com/junegunn/fzf.vim) para hallazgo difuso de archivos/buffer/tags.
 * [Rails.vim](https://github.com/tpope/vim-rails) para una mejor navegación de la estructura

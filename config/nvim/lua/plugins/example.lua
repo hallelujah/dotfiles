@@ -1,18 +1,12 @@
--- Use Catpuccin Latte as our default color scheme
+-- Use Snazzy as our default color scheme
 return {
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "catppuccin-latte",
+      colorscheme = "snazzy",
     },
   },
-  {
-    "catppuccin/nvim",
-    name = "catppuccin",
-    opts = {
-      flavour = "latte",
-    },
-  },
+  { "alexwu/nvim-snazzy" },
   -- Additional plugins from the original plugins.vim
   { "christoomey/vim-run-interactive" },
   { "elixir-lang/vim-elixir" },

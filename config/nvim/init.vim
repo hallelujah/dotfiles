@@ -71,15 +71,15 @@ set list listchars=tab:»·,trail:·,nbsp:·
 " Use one space, not two, after punctuation.
 set nojoinspaces
 
-" Use The Silver Searcher https://github.com/ggreer/the_silver_searcher
-if executable('ag')
-  " Use Ag over Grep
-  set grepprg=ag\ --nogroup\ --nocolor
+" Use ripgrep https://github.com/BurntSushi/ripgrep
+if executable('rg')
+  " Use rg over Grep
+  set grepprg=rg\ --vimgrep\ --no-heading\ --smart-case
 
-  " Use ag in fzf for listing files. Lightning fast and respects .gitignore
-  let $FZF_DEFAULT_COMMAND = 'ag --literal --files-with-matches --nocolor --hidden -g ""'
+  " Use rg in fzf for listing files. Lightning fast and respects .gitignore
+  let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
 
-  nnoremap \ :Ag<SPACE>
+  nnoremap \ :Rg<SPACE>
 endif
 
 " Make it obvious where 80 characters is

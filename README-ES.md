@@ -188,7 +188,7 @@ de archivos de Rails via `gf` y `:A` (alterno), `:Rextract` parciales,`:Rinvert`
 * Establece `<leader>` a un sólo espacio.
 * Navega entre los últimos dos archivos con espacio-espacio
 * Resaltado de sintaxis para Markdown, HTML, JavaScript, Ruby, Go, Elixir, y más.
-* Usa [Ag](https://github.com/ggreer/the_silver_searcher) en lugar de Grep cuando esté disponible.
+* Usa [ripgrep](https://github.com/BurntSushi/ripgrep) en lugar de Grep cuando esté disponible.
 * Map `<leader>ct` para re-indexar [Exuberant Ctags](http://ctags.sourceforge.net/).
 * Usa [vim-mkdir](https://github.com/pbrisbin/vim-mkdir) para crear automáticamente directorios
   no existentes antes de escribir el buffer.

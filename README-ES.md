@@ -52,7 +52,7 @@ De vez en cuando deberías descargar las actualizaciones de estos dotfiles, y ej
 
     rcup
 
-para ligar cualquier nuevo archivo e instalar los nuevos plugins de vim. **Nota** _Debes_ ejecutar
+para ligar cualquier nuevo archivo e instalar los nuevos plugins de nvim. **Nota** _Debes_ ejecutar
 `rcup` después de descargar para asegurarte que todos los archivos de los plugins
 estén instalados adecuadamente. Puedes ejecutar `rcup` con seguridad muchas veces
 para actualizar pronto y muy seguido!
@@ -73,8 +73,8 @@ Pon tus modificaciones en `~/dotfiles-local` anexado con `.local`:
 * `~/dotfiles-local/psqlrc.local` (proveemos `.psqlrc.local` en blanco para prevenir que `psql`
   arroje un error, pero debes sobreescribir el archivo con tu propia copia)
 * `~/dotfiles-local/tmux.conf.local`
-* `~/dotfiles-local/vimrc.local`
-* `~/dotfiles-local/vimrc.bundles.local`
+* `~/dotfiles-local/init.vim.local`
+* `~/dotfiles-local/plugins.vim.local`
 * `~/dotfiles-local/zshrc.local`
 * `~/dotfiles-local/zsh/configs/*`
 
@@ -93,15 +93,15 @@ Tu `~/dotfiles-local/gitconfig.local` tal vez se vea así:
       name = Dan Croak
       email = dan@thoughtbot.com
 
-Tu `~/dotfiles-local/vimrc.local` tal vez se vea así:
+Tu `~/dotfiles-local/init.vim.local` tal vez se vea así:
 
     " Color scheme
     colorscheme github
     highlight NonText guibg=#060606
     highlight Folded  guibg=#0A0A0A guifg=#9090D0
 
-Si prefieres prevenir la instalación de un plugin predeterminado de vim en `.vimrc.bundles`,
-puedes ignorarlo sacándolo con `UnPlug` en tu `~/.vimrc.bundles.local`.
+Si prefieres prevenir la instalación de un plugin predeterminado de nvim en `config/nvim/plugins.vim`,
+puedes ignorarlo sacándolo con `UnPlug` en tu `~/dotfiles-local/plugins.vim.local`.
 
     " Don't install vim-scripts/tComment
     UnPlug 'tComment'
@@ -127,7 +127,7 @@ Tu `~/dotfiles-local/zshrc.local` tal vez se vea así:
       eval "$(pyenv init -)"
     fi
 
-Tu `~/dotfiles-local/vimrc.bundles.local` tal vez se vea así:
+Tu `~/dotfiles-local/plugins.vim.local` tal vez se vea así:
 
     Plug 'Lokaltog/vim-powerline'
     Plug 'stephenmckinney/vim-solarized-powerline'
@@ -162,14 +162,14 @@ puede agregar el archivo `virtualenv`, otro el archivo `keys` y un tercero el ar
 
 El archivo `~/dotfiles-local/zshrc.local` se carga después de `~/dotfiles-local/zsh/configs`.
 
-Configuraciones de vim
+Configuraciones de nvim
 ----------------------
 
-Similar al directorio de configuración para zsh descrito arriba, vim
-automáticamente descarga los archivos en el directorio `~/dotfiles-local/vim/plugin`. Sin embargo, este no
+Similar al directorio de configuración para zsh descrito arriba, nvim
+automáticamente descarga los archivos en el directorio `~/dotfiles-local/config/nvim/after/plugin`. Sin embargo, este no
 tiene el mismo soporte para los subdirectorios `pre` ni `post` que tiene nuestro `zshrc`.
 
-Este es un ejemplo `~/dotfiles-local/vim/plugin/c.vim`. Se carga cada vez que inicia vim,
+Este es un ejemplo `~/dotfiles-local/config/nvim/after/plugin/c.vim`. Se carga cada vez que inicia nvim,
 sin importar de nombre del archivo:
 
     # Indent C programs according to BSD style(9)
@@ -179,7 +179,7 @@ sin importar de nombre del archivo:
 ¿Qué viene incluido?
 -----------------
 
-Configuración [vim](http://www.vim.org/):
+Configuración [nvim](https://neovim.io/):
 
 * [fzf](https://github.com/junegunn/fzf.vim) para hallazgo difuso de archivos/buffer/tags.
 * [Rails.vim](https://github.com/tpope/vim-rails) para una mejor navegación de la estructura

@@ -10,9 +10,9 @@ function! s:UnPlug(plug_name)
 endfunction
 command!  -nargs=1 UnPlug call s:UnPlug(<args>)
 
-let g:has_async = v:version >= 800 || has('nvim')
+let g:has_async = 1
 
-call plug#begin('~/.vim/bundle')
+call plug#begin('~/.local/share/nvim/plugged')
 
 " Define bundles via Github repos
 Plug 'christoomey/vim-run-interactive'
@@ -50,12 +50,10 @@ Plug 'tpope/vim-surround'
 Plug 'vim-ruby/vim-ruby'
 Plug 'vim-scripts/tComment'
 
-if g:has_async
-  Plug 'dense-analysis/ale'
-endif
+Plug 'dense-analysis/ale'
 
-if filereadable(expand("~/.vimrc.bundles.local"))
-  source ~/.vimrc.bundles.local
+if filereadable(expand("~/.config/nvim/plugins.vim.local"))
+  source ~/.config/nvim/plugins.vim.local
 endif
 
 call plug#end()

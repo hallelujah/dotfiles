@@ -47,7 +47,7 @@ From time to time you should pull down any updates to these dotfiles, and run
 
     rcup
 
-to link any new files and install new vim plugins. **Note** You _must_ run
+to link any new files and install new nvim plugins. **Note** You _must_ run
 `rcup` after pulling to ensure that all files in plugins are properly installed,
 but you can safely run `rcup` multiple times so update early and update often!
 
@@ -65,8 +65,8 @@ Put your customizations in `~/dotfiles-local` appended with `.local`:
 - `~/dotfiles-local/psqlrc.local` (we supply a blank `.psqlrc.local` to prevent `psql` from
   throwing an error, but you should overwrite the file with your own copy)
 - `~/dotfiles-local/tmux.conf.local`
-- `~/dotfiles-local/vimrc.local`
-- `~/dotfiles-local/vimrc.bundles.local`
+- `~/dotfiles-local/init.vim.local`
+- `~/dotfiles-local/plugins.vim.local`
 - `~/dotfiles-local/zshrc.local`
 - `~/dotfiles-local/zsh/configs/*`
 
@@ -85,16 +85,16 @@ Your `~/dotfiles-local/gitconfig.local` might look like this:
       name = Dan Croak
       email = dan@thoughtbot.com
 
-Your `~/dotfiles-local/vimrc.local` might look like this:
+Your `~/dotfiles-local/init.vim.local` might look like this:
 
     " Color scheme
     colorscheme github
     highlight NonText guibg=#060606
     highlight Folded  guibg=#0A0A0A guifg=#9090D0
 
-If you don't wish to install a vim plugin from the default set of vim plugins in
-`.vimrc.bundles`, you can ignore the plugin by calling it out with `UnPlug` in
-your `~/.vimrc.bundles.local`.
+If you don't wish to install a vim plugin from the default set of nvim plugins in
+`config/nvim/plugins.vim`, you can ignore the plugin by calling it out with `UnPlug` in
+your `~/dotfiles-local/plugins.vim.local`.
 
     " Don't install vim-scripts/tComment (notice the username of the plugin is
     removed)
@@ -122,7 +122,7 @@ Your `~/dotfiles-local/zshrc.local` might look like this:
       eval "$(pyenv init -)"
     fi
 
-Your `~/dotfiles-local/vimrc.bundles.local` might look like this:
+Your `~/dotfiles-local/plugins.vim.local` might look like this:
 
     Plug 'Lokaltog/vim-powerline'
     Plug 'stephenmckinney/vim-solarized-powerline'
@@ -172,13 +172,13 @@ The zsh history is configured with several useful options:
 
 History size is set to 8,192 entries providing ample command history.
 
-## vim Configurations
+## nvim Configurations
 
-Similarly to the zsh configuration directory as described above, vim
-automatically loads all files in the `~/dotfiles-local/vim/plugin` directory. This does not
+Similarly to the zsh configuration directory as described above, nvim
+automatically loads all files in the `~/dotfiles-local/config/nvim/after/plugin` directory. This does not
 have the same `pre` or `post` subdirectory support that our `zshrc` has.
 
-This is an example `~/dotfiles-local/vim/plugin/c.vim`. It is loaded every time vim starts,
+This is an example `~/dotfiles-local/config/nvim/after/plugin/c.vim`. It is loaded every time nvim starts,
 regardless of the file name:
 
     # Indent C programs according to BSD style(9)
@@ -187,13 +187,13 @@ regardless of the file name:
 
 ## What's in it?
 
-[vim](http://www.vim.org/) configuration:
+[nvim](https://neovim.io/) configuration:
 
 - [fzf](https://github.com/junegunn/fzf.vim) for fuzzy file/buffer/tag finding.
 - [Rails.vim](https://github.com/tpope/vim-rails) for enhanced navigation of
   Rails file structure via `gf` and `:A` (alternate), `:Rextract` partials,
   `:Rinvert` migrations, etc.
-- Run many kinds of tests [from vim]([https://github.com/janko-m/vim-test)
+- Run many kinds of tests [from nvim](https://github.com/janko-m/vim-test)
 - Set `<leader>` to a single space.
 - Switch between the last two files with space-space.
 - Syntax highlighting for Markdown, HTML, JavaScript, Ruby, Go, Elixir, more.

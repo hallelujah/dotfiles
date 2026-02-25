@@ -1,5 +1,3 @@
-set encoding=utf-8
-
 " Leader
 let mapleader = " "
 
@@ -17,15 +15,14 @@ set autowrite     " Automatically :write before running commands
 set modelines=0   " Disable modelines as a security precaution
 set nomodeline
 
-" Switch syntax highlighting on, when the terminal has colors
-" Also switch on highlighting the last used search pattern.
-if (&t_Co > 2 || has("gui_running")) && !exists("syntax_on")
-  syntax on
+" Plugins
+if filereadable(expand("~/.config/nvim/plugins.vim"))
+  source ~/.config/nvim/plugins.vim
 endif
 
-if filereadable(expand("~/.vimrc.bundles"))
-  source ~/.vimrc.bundles
-endif
+" Custom runtime path for vim_compat
+set runtimepath^=~/.config/nvim/vim_compat runtimepath+=~/.config/nvim/vim_compat/after
+let &packpath = &runtimepath
 
 " Load matchit.vim, but only if the user hasn't installed a newer version.
 if !exists('g:loaded_matchit') && findfile('plugin/matchit.vim', &rtp) ==# ''
@@ -34,7 +31,7 @@ endif
 
 filetype plugin indent on
 
-augroup vimrcEx
+augroup nvimrcEx
   autocmd!
 
   " When editing a file, always jump to the last known cursor position.
@@ -55,24 +52,7 @@ augroup vimrcEx
     \ set filetype=sh
   autocmd BufRead,BufNewFile gitconfig.local set filetype=gitconfig
   autocmd BufRead,BufNewFile tmux.conf.local set filetype=tmux
-  autocmd BufRead,BufNewFile vimrc.local set filetype=vim
-augroup END
-
-" ALE linting events
-augroup ale
-  autocmd!
-
-  if g:has_async
-    autocmd VimEnter *
-      \ set updatetime=1000 |
-      \ let g:ale_lint_on_text_changed = 0
-    autocmd CursorHold * call ale#Queue(0)
-    autocmd CursorHoldI * call ale#Queue(0)
-    autocmd InsertEnter * call ale#Queue(0)
-    autocmd InsertLeave * call ale#Queue(0)
-  else
-    echoerr "The thoughtbot dotfiles require NeoVim or Vim 8"
-  endif
+  autocmd BufRead,BufNewFile init.vim.local,plugins.vim.local set filetype=vim
 augroup END
 
 " When the type of shell script is /bin/sh, assume a POSIX-compatible
@@ -114,6 +94,8 @@ set numberwidth=5
 " will insert tab at beginning of line,
 " will use completion if not at beginning
 set wildmode=list:longest,list:full
+set wildoptions=pum
+
 function! InsertTabWrapper()
     let col = col('.') - 1
     if !col || getline('.')[col - 1] !~ '\k'
@@ -175,6 +157,6 @@ set diffopt+=vertical
 colorscheme catppuccin_latte
 
 " Local config
-if filereadable($HOME . "/.vimrc.local")
-  source ~/.vimrc.local
+if filereadable($HOME . "/.config/nvim/init.vim.local")
+  source ~/.config/nvim/init.vim.local
 endif

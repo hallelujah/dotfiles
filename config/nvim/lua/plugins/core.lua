@@ -39,15 +39,4 @@ return {
 		opts = {},
 		---@diagnostic enable: missing-fields
 	},
-	-- Local plugins
-	(function()
-		local plugins_local = vim.fn.expand("~/.config/nvim/plugins.vim.local")
-		if vim.fn.filereadable(plugins_local) == 1 then
-			-- This is a bit tricky since plugins.vim.local is Vimscript and uses vim-plug
-			-- For now, we'll just note that it's not directly compatible without manual migration
-			-- or a shim.
-			return {}
-		end
-		return {}
-	end)(),
 }

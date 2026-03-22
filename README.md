@@ -85,12 +85,12 @@ Your `~/dotfiles-local/gitconfig.local` might look like this:
       name = Dan Croak
       email = dan@thoughtbot.com
 
-Your `~/dotfiles-local/init.vim.local` might look like this:
+Your `~/dotfiles-local/init.lua.local` might look like this:
 
-    " Color scheme
-    colorscheme github
-    highlight NonText guibg=#060606
-    highlight Folded  guibg=#0A0A0A guifg=#9090D0
+    -- Color scheme
+    vim.cmd("colorscheme github")
+    vim.api.nvim_set_hl(0, "NonText", { bg = "#060606" })
+    vim.api.nvim_set_hl(0, "Folded", { bg = "#0A0A0A", fg = "#9090D0" })
 
 If you don't wish to install a plugin from the default set of nvim plugins, you can disable it in your `~/dotfiles-local/lua/plugins/`.
 
@@ -109,10 +109,12 @@ Your `~/dotfiles-local/zshrc.local` might look like this:
       eval "$(pyenv init -)"
     fi
 
-Your `~/dotfiles-local/plugins.vim.local` might look like this:
+Your `~/dotfiles-local/lua/plugins/local.lua` might look like this:
 
-    Plug 'Lokaltog/vim-powerline'
-    Plug 'stephenmckinney/vim-solarized-powerline'
+    return {
+      { "Lokaltog/vim-powerline" },
+      { "stephenmckinney/vim-solarized-powerline" },
+    }
 
 ## zsh Configurations
 
@@ -176,7 +178,7 @@ regardless of the file name:
 
 [nvim](https://neovim.io/) configuration (now using [LazyVim](https://www.lazyvim.org)):
 
-- [fzf](https://github.com/junegunn/fzf.vim) for fuzzy file/buffer/tag finding.
+- [fzf-lua](https://github.com/ibhagwan/fzf-lua) for fuzzy file/buffer/tag finding.
 - [Rails.vim](https://github.com/tpope/vim-rails) for enhanced navigation of
   Rails file structure via `gf` and `:A` (alternate), `:Rextract` partials,
   `:Rinvert` migrations, etc.
@@ -189,7 +191,7 @@ regardless of the file name:
 - Map `<leader>ct` to re-index ctags.
 - Use [vim-mkdir](https://github.com/pbrisbin/vim-mkdir) for automatically
   creating non-existing directories before writing the buffer.
-- Use [vim-plug](https://github.com/junegunn/vim-plug) to manage plugins.
+- Use [lazy.nvim](https://github.com/folke/lazy.nvim) to manage plugins.
 
 [tmux](http://robots.thoughtbot.com/a-tmux-crash-course)
 configuration:

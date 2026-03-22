@@ -15,46 +15,27 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 })
 
 -- Set filetype for specific patterns
-vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-  group = augroup("filetypes"),
-  pattern = { "*.md" },
-  command = "set filetype=markdown",
-})
-
-vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-  group = augroup("filetypes_json"),
-  pattern = { ".jscsrc", ".jshintrc", ".eslintrc" },
-  command = "set filetype=json",
-})
-
-vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-  group = augroup("filetypes_sh"),
-  pattern = {
-    "aliases.local",
-    "zshenv.local",
-    "zlogin.local",
-    "zlogout.local",
-    "zshrc.local",
-    "zprofile.local",
-    "*/zsh/configs/*",
+vim.filetype.add({
+  extension = {
+    md = "markdown",
   },
-  command = "set filetype=sh",
-})
-
-vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-  group = augroup("filetypes_gitconfig"),
-  pattern = { "gitconfig.local" },
-  command = "set filetype=gitconfig",
-})
-
-vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-  group = augroup("filetypes_tmux"),
-  pattern = { "tmux.conf.local" },
-  command = "set filetype=tmux",
-})
-
-vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-  group = augroup("filetypes_vim"),
-  pattern = { "init.vim.local", "plugins.vim.local" },
-  command = "set filetype=vim",
+  filename = {
+    [".jscsrc"] = "json",
+    [".jshintrc"] = "json",
+    [".eslintrc"] = "json",
+    ["aliases.local"] = "sh",
+    ["zshenv.local"] = "sh",
+    ["zlogin.local"] = "sh",
+    ["zlogout.local"] = "sh",
+    ["zshrc.local"] = "sh",
+    ["zprofile.local"] = "sh",
+    ["gitconfig.local"] = "gitconfig",
+    ["tmux.conf.local"] = "tmux",
+    ["init.lua.local"] = "lua",
+    ["PULLREQ_EDITMSG"] = "gitcommit",
+  },
+  pattern = {
+    [".*/zsh/configs/.*"] = "sh",
+    [".*/lua/plugins/.*%.lua"] = "lua",
+  },
 })

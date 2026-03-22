@@ -7,9 +7,9 @@ function _G.ReindexCtags()
   local ctags_hook_path = vim.fn.system("echo " .. ctags_hook_file):gsub("\n+$", "")
 
   if vim.fn.filereadable(vim.fn.expand(ctags_hook_path)) == 1 then
-    vim.cmd("!" .. ctags_hook_file)
+    vim.fn.system(ctags_hook_file)
   else
-    vim.cmd("!ctags -R .")
+    vim.fn.system("ctags -R .")
   end
 end
 
@@ -18,5 +18,5 @@ end
 vim.g.thoughtbot_ctags_mappings_enabled = vim.g.thoughtbot_ctags_mappings_enabled or 1
 
 if vim.g.thoughtbot_ctags_mappings_enabled ~= 0 then
-  vim.keymap.set("n", "<Leader>ct", ":call ReindexCtags()<CR>", { noremap = true })
+  vim.keymap.set("n", "<Leader>ct", ReindexCtags, { noremap = true })
 end

@@ -57,5 +57,5 @@ end
 -- New Lua local config
 local init_lua_local = vim.fn.expand("~/.config/nvim/init.local.lua")
 if vim.fn.filereadable(init_lua_local) == 1 then
-  vim.cmd("luafile " .. init_lua_local)
+  dofile(init_lua_local)
 end

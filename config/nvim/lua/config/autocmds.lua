@@ -46,7 +46,7 @@ vim.api.nvim_create_autocmd("FileType", {
     local ft = event.match
     local local_file = vim.fn.expand("~/.config/nvim/after/ftplugin/" .. ft .. ".local.lua")
     if vim.fn.filereadable(local_file) == 1 then
-      vim.cmd("luafile " .. local_file)
+      dofile(local_file)
     end
   end,
 })

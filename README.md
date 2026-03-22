@@ -65,8 +65,8 @@ Put your customizations in `~/dotfiles-local` appended with `.local`:
 - `~/dotfiles-local/psqlrc.local` (we supply a blank `.psqlrc.local` to prevent `psql` from
   throwing an error, but you should overwrite the file with your own copy)
 - `~/dotfiles-local/tmux.conf.local`
-- `~/dotfiles-local/init.vim.local` (Vimscript) or `~/dotfiles-local/init.lua.local` (Lua)
-- `~/dotfiles-local/lua/plugins/*.lua` (for custom plugins)
+- `~/dotfiles-local/init.local.lua` (Lua)
+- `~/dotfiles-local/**/*.local.lua` (any directory)
 - `~/dotfiles-local/zshrc.local`
 - `~/dotfiles-local/zsh/configs/*`
 
@@ -85,10 +85,10 @@ Your `~/dotfiles-local/gitconfig.local` might look like this:
       name = Dan Croak
       email = dan@thoughtbot.com
 
-Your `~/dotfiles-local/init.lua.local` might look like this:
+Your `~/dotfiles-local/init.local.lua` might look like this:
 
     -- Color scheme
-    vim.cmd("colorscheme github")
+    vim.cmd.colorscheme("github")
     vim.api.nvim_set_hl(0, "NonText", { bg = "#060606" })
     vim.api.nvim_set_hl(0, "Folded", { bg = "#0A0A0A", fg = "#9090D0" })
 
@@ -115,6 +115,8 @@ Your `~/dotfiles-local/lua/plugins/local.lua` might look like this:
       { "Lokaltog/vim-powerline" },
       { "stephenmckinney/vim-solarized-powerline" },
     }
+
+**Tip:** You can add any file `*.local.lua` to any directory in `~/dotfiles-local/config/nvim/` and it will be recognized as a Lua file. If you add it to `after/ftplugin/`, it will be automatically loaded for that filetype.
 
 ## zsh Configurations
 
@@ -167,12 +169,13 @@ Similarly to the zsh configuration directory as described above, nvim
 automatically loads all files in the `~/dotfiles-local/config/nvim/after/plugin` directory. This does not
 have the same `pre` or `post` subdirectory support that our `zshrc` has.
 
-This is an example `~/dotfiles-local/config/nvim/after/plugin/c.vim`. It is loaded every time nvim starts,
-regardless of the file name:
+This is an example `~/dotfiles-local/config/nvim/after/ftplugin/c.local.lua`. It is loaded every time a C file is opened:
 
-    # Indent C programs according to BSD style(9)
-    set cinoptions=:0,t0,+4,(4
-    autocmd BufNewFile,BufRead *.[ch] setlocal sw=0 ts=8 noet
+    -- Indent C programs according to BSD style(9)
+    vim.opt_local.cinoptions = ":0,t0,+4,(4"
+    vim.opt_local.shiftwidth = 0
+    vim.opt_local.tabstop = 8
+    vim.opt_local.expandtab = false
 
 ## What's in it?
 

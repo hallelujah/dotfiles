@@ -31,11 +31,22 @@ vim.filetype.add({
     ["zprofile.local"] = "sh",
     ["gitconfig.local"] = "gitconfig",
     ["tmux.conf.local"] = "tmux",
-    ["init.lua.local"] = "lua",
     ["PULLREQ_EDITMSG"] = "gitcommit",
   },
   pattern = {
     [".*/zsh/configs/.*"] = "sh",
     [".*/lua/plugins/.*%.lua"] = "lua",
   },
+})
+
+-- Load local ftplugins
+vim.api.nvim_create_autocmd("FileType", {
+  group = augroup("local_ftplugin"),
+  callback = function(event)
+    local ft = event.match
+    local local_file = vim.fn.expand("~/.config/nvim/after/ftplugin/" .. ft .. ".local.lua")
+    if vim.fn.filereadable(local_file) == 1 then
+      vim.cmd("luafile " .. local_file)
+    end
+  end,
 })

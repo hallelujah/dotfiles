@@ -34,10 +34,6 @@ _load_settings() {
 }
 _load_settings "$HOME/.zsh/configs"
 
-if [ -f "/opt/homebrew/bin/brew" ]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
-
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 
 # aliases

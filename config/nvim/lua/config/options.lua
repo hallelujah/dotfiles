@@ -54,14 +54,8 @@ if vim.fn.executable("rg") == 1 then
   vim.env.FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
 end
 
--- Load local config
-local init_local = vim.fn.expand("~/.config/nvim/init.vim.local")
-if vim.fn.filereadable(init_local) == 1 then
-  vim.cmd("source " .. init_local)
-end
-
 -- New Lua local config
-local init_lua_local = vim.fn.expand("~/.config/nvim/init.lua.local")
+local init_lua_local = vim.fn.expand("~/.config/nvim/init.local.lua")
 if vim.fn.filereadable(init_lua_local) == 1 then
   vim.cmd("luafile " .. init_lua_local)
 end

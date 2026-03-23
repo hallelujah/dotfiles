@@ -8,7 +8,7 @@ export -U PATH
 
 # Activate Mise for system that has it (MacOS, Fedora)
 if command -v mise >/dev/null; then
-  mise activate zsh
+  eval "$(mise activate zsh)"
 fi
 
 arch="$(uname -m)"

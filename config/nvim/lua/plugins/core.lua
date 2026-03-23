@@ -2,9 +2,6 @@
 return {
 	{
 		"LazyVim/LazyVim",
-		opts = {
-			colorscheme = "embark",
-		},
 	},
 
 	-- Actually, LazyVim's default linting/formatting is better, but let's keep ALE for compatibility as a start

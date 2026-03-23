@@ -6,22 +6,7 @@ return {
 			colorscheme = "embark",
 		},
 	},
-	-- Additional plugins from the original plugins.vim
-	{ "christoomey/vim-run-interactive" },
-	{ "elixir-lang/vim-elixir" },
-	{ "fatih/vim-go" },
-	{ "tpope/vim-bundler" },
-	{ "tpope/vim-endwise" },
-	{ "tpope/vim-eunuch" },
-	{ "tpope/vim-projectionist" },
-	{ "tpope/vim-rails" },
-	{ "tpope/vim-rake" },
-	{ "tpope/vim-repeat" },
-	{ "tpope/vim-rhubarb" },
-	{ "vim-ruby/vim-ruby" },
-	{ "vim-scripts/tComment" },
 
-	-- ALE (LazyVim uses conform/nvim-lint by default, but keeping ALE if explicitly requested or preferred)
 	-- Actually, LazyVim's default linting/formatting is better, but let's keep ALE for compatibility as a start
 	{ "dense-analysis/ale" },
 	{ "neovim/nvim-lspconfig", opts = { servers = { ruby_lsp = {} } } },
@@ -39,4 +24,7 @@ return {
 		opts = {},
 		---@diagnostic enable: missing-fields
 	},
+
+	-- surround
+	{ "nvim-mini/mini.nvim", version = false },
 }

@@ -10,15 +10,3 @@ export -U PATH
 if command -v mise >/dev/null; then
   eval "$(mise activate zsh)"
 fi
-
-arch="$(uname -m)"
-if [ "$arch" = "arm64" ]; then
-  HOMEBREW_PREFIX="/opt/homebrew"
-else
-  HOMEBREW_PREFIX="/usr/local"
-fi
-
-# Activate Homebrew for system that has it (MacOS)
-if [ -f "$HOMEBREW_PREFIX/bin/brew" ]; then
-  eval "$($HOMEBREW_PREFIX/bin/brew shellenv)"
-fi

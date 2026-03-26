@@ -4,6 +4,7 @@ alias ln="ln -v"
 alias mkdir="mkdir -p"
 alias e="$EDITOR"
 alias v="$VISUAL"
+alias cl="clear"
 
 # Bundler
 alias b="bundle"
@@ -20,7 +21,6 @@ alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias -- -="cd -"
-
 # Include custom aliases
 if [[ -f ~/.aliases.local ]]; then
   source ~/.aliases.local

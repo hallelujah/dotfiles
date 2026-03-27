@@ -9,21 +9,9 @@ _G.InsertTabWrapper = function()
     return vim.api.nvim_replace_termcodes("<C-p>", true, true, true)
   end
 end
-map("i", "<Tab>", "v:lua.InsertTabWrapper()", { expr = true, noremap = true })
-map("i", "<S-Tab>", "<C-n>", { noremap = true })
 
 -- Switch between the last two files
 map("n", "<Leader><Leader>", "<C-^>", { noremap = true })
-
--- vim-test mappings
-map("n", "<Leader>t", ":TestFile<CR>", { silent = true })
-map("n", "<Leader>s", ":TestNearest<CR>", { silent = true })
-map("n", "<Leader>l", ":TestLast<CR>", { silent = true })
-map("n", "<Leader>a", ":TestSuite<CR>", { silent = true })
-map("n", "<Leader>gt", ":TestVisit<CR>", { silent = true })
-
--- Run commands that require an interactive shell
-map("n", "<Leader>r", ":RunInInteractiveShell ", { noremap = true })
 
 -- Quicker window movement
 map("n", "<C-j>", "<C-w>j", { noremap = true })
@@ -35,9 +23,14 @@ map("n", "<C-l>", "<C-w>l", { noremap = true })
 map("n", "]r", ":ALENextWrap<CR>", { noremap = true })
 map("n", "[r", ":ALEPreviousWrap<CR>", { noremap = true })
 
--- Map Ctrl + p to open fuzzy find (Files)
--- Note: LazyVim has its own picker, but keeping this for familiarity
-map("n", "<C-p>", ":Files<CR>", { noremap = true })
+-- Load an existing chat (opens your fuzzy finder)
+map("n", "<leader>al", "<cmd>CopilotChatLoad<cr>", { desc = "Copilot Chat - Load History" })
+
+-- Save the current chat (leaves you in the command line to type a name)
+map("n", "<leader>as", ":CopilotChatSave ", { desc = "Copilot Chat - Save History" })
+
+-- Quick save (saves automatically with a timestamp without prompting for a name)
+map("n", "<leader>aS", "<cmd>CopilotChatSave<cr>", { desc = "Copilot Chat - Quick Save" })
 
 -- Custom Rg mapping
 if vim.fn.executable("rg") == 1 then

@@ -39,6 +39,13 @@ require("lazy").setup({
     -- import/override with your plugins
     { import = "plugins" },
   },
+
+  rocks = {
+    -- This stops Lazy from looking for Luarocks or trying to
+    -- build a Hererocks/Python environment on NixOS/Fedora/Mac.
+    enabled = false,
+  },
+
   defaults = {
     -- By default, only LazyVim plugins will be lazy-loaded. Your custom plugins will load during startup.
     -- If you know what you're doing, you can set this to `true` to have all your custom plugins lazy-loaded by default.
@@ -64,9 +71,5 @@ require("lazy").setup({
         "zipPlugin",
       },
     },
-  },
-  rocks = {
-    enabled = true,
-    hererocks = true, -- This tells Lazy to install its own local LuaRocks
   },
 })

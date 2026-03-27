@@ -197,7 +197,6 @@ This is an example `~/dotfiles-local/config/nvim/after/ftplugin/c.local.lua`. It
 
 [nvim](https://neovim.io/) configuration (now using [LazyVim](https://www.lazyvim.org)):
 
-- [fzf-lua](https://github.com/ibhagwan/fzf-lua) for fuzzy file/buffer/tag finding.
 - [Rails.vim](https://github.com/tpope/vim-rails) for enhanced navigation of
   Rails file structure via `gf` and `:A` (alternate), `:Rextract` partials,
   `:Rinvert` migrations, etc.

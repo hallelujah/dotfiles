@@ -2,6 +2,22 @@
 
 ![prompt](http://images.thoughtbot.com/thoughtbot-dotfiles-prompt.png)
 
+<!-- mtoc-start -->
+
+* [Requirements](#requirements)
+* [Install](#install)
+* [Update](#update)
+* [Make your own customizations](#make-your-own-customizations)
+* [zsh Configurations](#zsh-configurations)
+* [zsh History Configurations](#zsh-history-configurations)
+* [nvim Configurations](#nvim-configurations)
+* [What's in it?](#whats-in-it)
+* [Thanks](#thanks)
+* [License](#license)
+* [About thoughtbot](#about-thoughtbot)
+
+<!-- mtoc-end -->
+
 ## Requirements
 
 Set zsh as your login shell:
@@ -151,15 +167,15 @@ The `~/dotfiles-local/zshrc.local` is loaded after `~/dotfiles-local/zsh/configs
 
 The zsh history is configured with several useful options:
 
--   `hist_ignore_all_dups`: Removes duplicate commands from history
+- `hist_ignore_all_dups`: Removes duplicate commands from history
 
--   `hist_ignore_space`: Commands starting with a space are not saved to history
-    (useful for sensitive commands)
+- `hist_ignore_space`: Commands starting with a space are not saved to history
+  (useful for sensitive commands)
 
--   `inc_append_history`: Adds commands to history as they're executed, not just
-    when the shell exits
+- `inc_append_history`: Adds commands to history as they're executed, not just
+  when the shell exits
 
--   `share_history`: Shares history across multiple zsh sessions in real-time
+- `share_history`: Shares history across multiple zsh sessions in real-time
 
 History size is set to 8,192 entries providing ample command history.
 
@@ -262,6 +278,7 @@ redistributed under the terms specified in the [`LICENSE`] file.
 [`LICENSE`]: /LICENSE
 
 <!-- START /templates/footer.md -->
+
 ## About thoughtbot
 
 ![thoughtbot](https://thoughtbot.com/thoughtbot-logo-for-readmes.svg)

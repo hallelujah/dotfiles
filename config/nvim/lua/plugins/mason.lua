@@ -9,6 +9,7 @@ return {
         "prettier",
         "markdownlint-cli2",
         "markdown-toc",
+        "sqlfluff",
         -- "fish" is usually a system package, but Mason can handle the LSP
         "fish-lsp",
         "erb-formatter",

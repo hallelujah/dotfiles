@@ -31,8 +31,3 @@ map("n", "<leader>as", ":CopilotChatSave ", { desc = "Copilot Chat - Save Histor
 
 -- Quick save (saves automatically with a timestamp without prompting for a name)
 map("n", "<leader>aS", "<cmd>CopilotChatSave<cr>", { desc = "Copilot Chat - Quick Save" })
-
--- Custom Rg mapping
-if vim.fn.executable("rg") == 1 then
-  map("n", "\\", ":Rg ", { noremap = true })
-end

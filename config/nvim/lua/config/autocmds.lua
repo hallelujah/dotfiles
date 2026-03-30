@@ -32,10 +32,12 @@ vim.filetype.add({
     ["gitconfig.local"] = "gitconfig",
     ["tmux.conf.local"] = "tmux",
     ["PULLREQ_EDITMSG"] = "gitcommit",
+    ["gitconfig"] = "gitconfig", -- If the file is literally named 'gitconfig'
   },
   pattern = {
     [".*/zsh/configs/.*"] = "sh",
     [".*/lua/plugins/.*%.lua"] = "lua",
+    [".*gitconfig.*"] = "gitconfig", -- Catches any file with 'gitconfig' in the name
   },
 })
 

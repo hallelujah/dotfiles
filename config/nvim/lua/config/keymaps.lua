@@ -19,10 +19,6 @@ map("n", "<C-k>", "<C-w>k", { noremap = true })
 map("n", "<C-h>", "<C-w>h", { noremap = true })
 map("n", "<C-l>", "<C-w>l", { noremap = true })
 
--- Move between linting errors (ALE)
-map("n", "]r", ":ALENextWrap<CR>", { noremap = true })
-map("n", "[r", ":ALEPreviousWrap<CR>", { noremap = true })
-
 -- Load an existing chat (opens your fuzzy finder)
 map("n", "<leader>al", "<cmd>CopilotChatLoad<cr>", { desc = "Copilot Chat - Load History" })
 

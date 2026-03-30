@@ -1,3 +1,5 @@
+# vim: ft=gitconfig
+
 [init]
   defaultBranch = main
   templatedir = ~/.git_template
@@ -8,11 +10,12 @@
 [alias]
   aa = add --all
   ap = add --patch
-  branches = for-each-ref --sort=-committerdate --format=\"%(color:blue)%(authordate:relative)\t%(color:red)%(authorname)\t%(color:white)%(color:bold)%(refname:short)\" refs/remotes
+  branches = "for-each-ref --sort=-committerdate --format=\"%(color:blue)%(authordate:relative)\t%(color:red)%(authorname)\t%(color:white)%(color:bold)%(refname:short)\" refs/remotes"
   ci = commit -v
   co = checkout
   pf = push --force-with-lease
   st = status
+  dv = !nvim -c "DiffviewOpen"
 [core]
   excludesfile = ~/.gitignore
   autocrlf = input
@@ -30,3 +33,20 @@
   colorMoved = zebra
 [pull]
 	ff = only
+
+[merge]
+    tool = diffview
+[mergetool "diffview"]
+    # $MERGED is the file with conflict markers
+    cmd = nvim -n -c "DiffviewOpen" "$MERGED"
+[mergetool]
+    prompt = false
+    keepBackup = false
+
+[diff]
+    tool = diffview
+[difftool "diffview"]
+    # $LOCAL and $REMOTE are the temporary files Git generates for comparison
+    cmd = nvim -c "DiffviewOpen" "$LOCAL" "$REMOTE"
+[difftool]
+    prompt = false

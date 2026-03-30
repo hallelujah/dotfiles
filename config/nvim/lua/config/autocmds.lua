@@ -52,3 +52,20 @@ vim.api.nvim_create_autocmd("FileType", {
     end
   end,
 })
+
+local function set_diffview_colors()
+  -- Make filler lines (empty side) less aggressive (dark grey instead of red/green)
+  vim.api.nvim_set_hl(0, "DiffviewDiffDelete", { fg = "#5c6370", bg = "none" }) -- dashes
+  vim.api.nvim_set_hl(0, "DiffviewDiffAddAsDelete", { fg = "#5c6370", bg = "none" }) -- text on left
+
+  -- Optionally adjust Add/Change to blend better with OneDark Deep
+  vim.api.nvim_set_hl(0, "DiffAdd", { bg = "#28322e" }) -- Darker green
+  vim.api.nvim_set_hl(0, "DiffDelete", { bg = "#3d2525" }) -- Darker red
+end
+
+-- Apply when colorscheme loads
+vim.api.nvim_create_autocmd("ColorScheme", {
+  callback = set_diffview_colors,
+})
+-- Apply immediately if already in a diffview
+set_diffview_colors()

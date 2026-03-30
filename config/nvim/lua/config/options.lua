@@ -24,6 +24,8 @@ opt.softtabstop = 2
 
 opt.list = true
 opt.listchars = { tab = "»·", trail = "·", nbsp = "·" }
+-- Use a subtle dot instead of the heavy '-' or '_' bars
+-- vim.opt.fillchars:append({ diff = "·" })
 
 opt.joinspaces = false
 

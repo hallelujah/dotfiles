@@ -19,6 +19,16 @@ map("n", "<C-k>", "<C-w>k", { noremap = true })
 map("n", "<C-h>", "<C-w>h", { noremap = true })
 map("n", "<C-l>", "<C-w>l", { noremap = true })
 
+-- DiffView
+map("n", "<leader>gv", "<cmd>DiffviewOpen<cr>", { desc = "Open DiffView" })
+map("n", "<leader>gh", "<cmd>DiffviewFileHistory %<cr>", { desc = "Open DiffView File History" })
+map(
+  "n",
+  "<leader>gB",
+  "<cmd>DiffviewOpen origin/HEAD..HEAD --imply-local<cr>",
+  { desc = "DiffView Review Branch changes" }
+)
+
 -- Load an existing chat (opens your fuzzy finder)
 map("n", "<leader>al", "<cmd>CopilotChatLoad<cr>", { desc = "Copilot Chat - Load History" })
 

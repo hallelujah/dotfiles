@@ -1,6 +1,6 @@
-local function cmd_path(cmd)
+local function cmd_path(cmd, ...)
   if vim.fn.filereadable("Gemfile") == 1 then
-    return { "bundle", "exec", cmd }
+    return { "bundle", "exec", cmd, ... }
   end
   local is_nixos = vim.fn.filereadable("/etc/NIXOS") == 1
     or (
@@ -8,9 +8,9 @@ local function cmd_path(cmd)
       and vim.fn.match(vim.fn.readfile("/etc/os-release"), "ID=nixos") >= 0
     )
   if is_nixos then
-    return { cmd }
+    return { cmd, ... }
   else
-    return { vim.fn.expand("~/.local/share/mise/shims/" .. cmd) }
+    return { vim.fn.expand("~/.local/share/mise/shims/" .. cmd), ... }
   end
 end
 
@@ -39,9 +39,9 @@ end
 local ruby_server = "ruby_lsp"
 local ruby_server_cmd = cmd_path("ruby-lsp")
 
-if has_gem_or_cmd("solargraph") then
+if has_gem_or_cmd("solargraph") and vim.g.lazyvim_ruby_lsp and vim.g.lazyvim_ruby_lsp == "solargraph" then
   ruby_server = "solargraph"
-  ruby_server_cmd = cmd_path("solargraph")
+  ruby_server_cmd = cmd_path("solargraph", "stdio")
 end
 vim.notify("ruby lsp server: " .. ruby_server, vim.log.levels.INFO)
 
@@ -64,12 +64,13 @@ return {
         [ruby_server] = {
           mason = false,
           cmd = ruby_server_cmd,
+          enabled = true,
         },
-        -- [ruby_server == "solargraph" and "ruby_lsp" or "solargraph"] = { enabled = false },
+        [ruby_server == "solargraph" and "ruby_lsp" or "solargraph"] = { enabled = false },
 
         rubocop = {
           mason = false,
-          cmd = vim.list_extend(cmd_path("rubocop"), { "--lsp" }),
+          cmd = cmd_path("rubocop", "--lsp"),
         },
       },
     },

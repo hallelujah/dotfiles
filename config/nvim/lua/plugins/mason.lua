@@ -13,6 +13,7 @@ return {
         -- "fish" is usually a system package, but Mason can handle the LSP
         "fish-lsp",
         "erb-formatter",
+        "emmet-language-server",
       })
     end,
   },

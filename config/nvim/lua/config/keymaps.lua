@@ -37,3 +37,44 @@ map("n", "<leader>as", ":CopilotChatSave ", { desc = "Copilot Chat - Save Histor
 
 -- Quick save (saves automatically with a timestamp without prompting for a name)
 map("n", "<leader>aS", "<cmd>CopilotChatSave<cr>", { desc = "Copilot Chat - Quick Save" })
+
+-- Define the function
+local function copy_ruby_namespace()
+  local node = vim.treesitter.get_node()
+  local parts = {}
+
+  while node do
+    if node:type() == "class" or node:type() == "module" then
+      -- The name is typically the first child of type 'constant' or 'scope_resolution'
+      for child in node:iter_children() do
+        if child:type() == "constant" or child:type() == "scope_resolution" then
+          table.insert(parts, 1, vim.treesitter.get_node_text(child, 0))
+          break
+        end
+      end
+    end
+    node = node:parent()
+  end
+
+  local full_namespace = table.concat(parts, "::")
+  if full_namespace ~= "" then
+    vim.fn.setreg("+", full_namespace) -- Yank to system clipboard
+    print("Copied: " .. full_namespace)
+  else
+    print("No Ruby namespace found under cursor.")
+  end
+end
+
+-- Set the keymap (Leader + c + r)
+vim.keymap.set("n", "<leader>cy", copy_ruby_namespace, { desc = "Copy Ruby Namespace" })
+
+vim.keymap.set("n", "<leader>gY", function()
+  Snacks.gitbrowse({
+    what = "permalink",
+    open = function(url)
+      vim.fn.setreg("+", url)
+      Snacks.notify.info("Copied commit URL to clipboard: " .. url)
+    end,
+    return_sha1 = false, -- ensure this is false or omitted to get the URL, not just the SHA1
+  })
+end, { desc = "Git Browse (Copy Permalink)" })

@@ -1,17 +1,18 @@
 local function cmd_path(cmd, ...)
-  if vim.fn.filereadable("Gemfile") == 1 then
-    return { "bundle", "exec", cmd, ... }
-  end
-  local is_nixos = vim.fn.filereadable("/etc/NIXOS") == 1
-    or (
-      vim.fn.filereadable("/etc/os-release") == 1
-      and vim.fn.match(vim.fn.readfile("/etc/os-release"), "ID=nixos") >= 0
-    )
-  if is_nixos then
-    return { cmd, ... }
-  else
-    return { vim.fn.expand("~/.local/share/mise/shims/" .. cmd), ... }
-  end
+  return { vim.fn.expand("~/.local/share/mise/shims/" .. cmd), ... }
+  -- if vim.fn.filereadable("Gemfile") == 1 then
+  --   return { "bundle", "exec", cmd, ... }
+  -- end
+  -- local is_nixos = vim.fn.filereadable("/etc/NIXOS") == 1
+  --   or (
+  --     vim.fn.filereadable("/etc/os-release") == 1
+  --     and vim.fn.match(vim.fn.readfile("/etc/os-release"), "ID=nixos") >= 0
+  --   )
+  -- if is_nixos then
+  --   return { cmd, ... }
+  -- else
+  --   return { vim.fn.expand("~/.local/share/mise/shims/" .. cmd), ... }
+  -- end
 end
 
 local capabilities = {

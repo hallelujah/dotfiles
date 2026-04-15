@@ -1,18 +1,18 @@
 local function cmd_path(cmd, ...)
-  return { vim.fn.expand("~/.local/share/mise/shims/" .. cmd), ... }
-  -- if vim.fn.filereadable("Gemfile") == 1 then
-  --   return { "bundle", "exec", cmd, ... }
-  -- end
-  -- local is_nixos = vim.fn.filereadable("/etc/NIXOS") == 1
-  --   or (
-  --     vim.fn.filereadable("/etc/os-release") == 1
-  --     and vim.fn.match(vim.fn.readfile("/etc/os-release"), "ID=nixos") >= 0
-  --   )
-  -- if is_nixos then
-  --   return { cmd, ... }
-  -- else
-  --   return { vim.fn.expand("~/.local/share/mise/shims/" .. cmd), ... }
-  -- end
+  -- return { vim.fn.expand("~/.local/share/mise/shims/" .. cmd), ... }
+  if vim.fn.filereadable("Gemfile") == 1 then
+    return { "bundle", "exec", cmd, ... }
+  end
+  local is_nixos = vim.fn.filereadable("/etc/NIXOS") == 1
+    or (
+      vim.fn.filereadable("/etc/os-release") == 1
+      and vim.fn.match(vim.fn.readfile("/etc/os-release"), "ID=nixos") >= 0
+    )
+  if is_nixos then
+    return { cmd, ... }
+  else
+    return { vim.fn.expand("~/.local/share/mise/shims/" .. cmd), ... }
+  end
 end
 
 local capabilities = {
@@ -36,6 +36,56 @@ local function has_gem_or_cmd(cmd)
   return vim.fn.executable(path[1]) == 1 or vim.fn.executable(cmd) == 1
 end
 
+local function debounce_ruby_symbols_on_init(client)
+  local log = require("vim.lsp.log")
+
+  log.info("--- Ruby LSP: Debounce patch active ---")
+
+  local original_request = client.request
+  local timer = vim.uv.new_timer()
+
+  client.request = function(self, param1, ...)
+    local args = { ... }
+
+    -- 1. Log EVERYTHING at the start using debug level
+    log.debug("INCOMING REQUEST:")
+    log.debug("Param1: " .. vim.inspect(param1))
+    if #args > 0 then
+      log.debug("Other args: " .. vim.inspect(args))
+    end
+
+    -- 2. Safely extract the method and query
+    local method_name, query
+    if type(param1) == "table" then
+      method_name = param1.method
+      query = param1.params and param1.params.query or ""
+    else
+      method_name = param1
+      local params = args[1]
+      query = params and type(params) == "table" and params.query or ""
+    end
+
+    -- 3. Apply the debounce logic ONLY if it's a workspace symbol request
+    if method_name == "workspace/symbol" then
+      log.info("INTERCEPTED: typing... (query: '" .. query .. "')")
+
+      timer:stop()
+      timer:start(
+        300,
+        0,
+        vim.schedule_wrap(function()
+          log.info("DISPATCHED:  Sending request! (query: '" .. query .. "')")
+          original_request(self, param1, unpack(args))
+        end)
+      )
+
+      return true, -1
+    end
+
+    -- 4. Pass all other requests through instantly
+    return original_request(self, param1, unpack(args))
+  end
+end
 -- Logic to determine which server to use
 local ruby_server = "ruby_lsp"
 local ruby_server_cmd = cmd_path("ruby-lsp")
@@ -58,6 +108,7 @@ return {
       servers = {
         ["*"] = {
           capabilities = capabilities,
+          on_init = debounce_ruby_symbols_on_init,
         },
         taplo = {
           root_dir = require("lspconfig.util").root_pattern("*.toml", ".git", "Cargo.toml"),

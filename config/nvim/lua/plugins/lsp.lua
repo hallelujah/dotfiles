@@ -1,18 +1,24 @@
 local function cmd_path(cmd, ...)
-  -- return { vim.fn.expand("~/.local/share/mise/shims/" .. cmd), ... }
-  if vim.fn.filereadable("Gemfile") == 1 then
-    return { "bundle", "exec", cmd, ... }
+  local args = { ... }
+  local mise_path = vim.fn.expand("~/.local/share/mise/shims/" .. cmd)
+  if vim.fn.executable(mise_path) == 1 then
+    return { mise_path, unpack(args) }
   end
+
   local is_nixos = vim.fn.filereadable("/etc/NIXOS") == 1
     or (
       vim.fn.filereadable("/etc/os-release") == 1
       and vim.fn.match(vim.fn.readfile("/etc/os-release"), "ID=nixos") >= 0
     )
-  if is_nixos then
-    return { cmd, ... }
-  else
-    return { vim.fn.expand("~/.local/share/mise/shims/" .. cmd), ... }
+  if is_nixos and vim.fn.executable(cmd) == 1 then
+    return { cmd, unpack(args) }
   end
+
+  if vim.fn.filereadable("Gemfile.lock") == 1 then
+    return { "bundle", "exec", cmd, unpack(args) }
+  end
+
+  return { cmd, unpack(args) }
 end
 
 local capabilities = {

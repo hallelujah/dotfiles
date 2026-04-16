@@ -1,21 +1,25 @@
+-- Helper to check if the command is available
+local function has_gem(cmd)
+  -- 1. Check if it's in the Gemfile.lock (for "bundle exec" projects)
+  if vim.fn.filereadable("Gemfile.lock") == 1 then
+    local lockfile_content = table.concat(vim.fn.readfile("Gemfile.lock"), "\n")
+    -- Look for the gem name in the specs section
+    if lockfile_content:find("%s" .. cmd .. "%s") then
+      return true
+    end
+  end
+end
+
 local function cmd_path(cmd, ...)
   local args = { ... }
   local mise_path = vim.fn.expand("~/.local/share/mise/shims/" .. cmd)
+
+  if has_gem(cmd) then
+    return { "bundle", "exec", cmd, unpack(args) }
+  end
+
   if vim.fn.executable(mise_path) == 1 then
     return { mise_path, unpack(args) }
-  end
-
-  local is_nixos = vim.fn.filereadable("/etc/NIXOS") == 1
-    or (
-      vim.fn.filereadable("/etc/os-release") == 1
-      and vim.fn.match(vim.fn.readfile("/etc/os-release"), "ID=nixos") >= 0
-    )
-  if is_nixos and vim.fn.executable(cmd) == 1 then
-    return { cmd, unpack(args) }
-  end
-
-  if vim.fn.filereadable("Gemfile.lock") == 1 then
-    return { "bundle", "exec", cmd, unpack(args) }
   end
 
   return { cmd, unpack(args) }
@@ -25,22 +29,6 @@ local capabilities = {
   offsetEncoding = { "utf-16" },
   positionEncodings = { "utf-16" },
 }
-
--- Helper to check if the command is available
-local function has_gem_or_cmd(cmd)
-  -- 1. Check if it's in the Gemfile.lock (for "bundle exec" projects)
-  if vim.fn.filereadable("Gemfile.lock") == 1 then
-    local lockfile_content = table.concat(vim.fn.readfile("Gemfile.lock"), "\n")
-    -- Look for the gem name in the specs section
-    if lockfile_content:find("%s" .. cmd .. "%s") then
-      return true
-    end
-  end
-
-  -- 2. Fallback: Check if it's executable via mise or system path
-  local path = cmd_path(cmd)
-  return vim.fn.executable(path[1]) == 1 or vim.fn.executable(cmd) == 1
-end
 
 local function debounce_ruby_symbols_on_init(client)
   local log = require("vim.lsp.log")
@@ -96,7 +84,7 @@ end
 local ruby_server = "ruby_lsp"
 local ruby_server_cmd = cmd_path("ruby-lsp")
 
-if has_gem_or_cmd("solargraph") and vim.g.lazyvim_ruby_lsp and vim.g.lazyvim_ruby_lsp == "solargraph" then
+if has_gem("solargraph") and vim.g.lazyvim_ruby_lsp and vim.g.lazyvim_ruby_lsp == "solargraph" then
   ruby_server = "solargraph"
   ruby_server_cmd = cmd_path("solargraph", "stdio")
 end

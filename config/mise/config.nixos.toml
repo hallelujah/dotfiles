@@ -1,0 +1,2 @@
+[settings]
+disable_tools = ["lua", "postgres", "tmux", "redis", "ruby", "node", "gem:ruby-lsp", "gem:ruby-lsp-rails"]

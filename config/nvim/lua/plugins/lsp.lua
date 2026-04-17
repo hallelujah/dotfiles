@@ -1,22 +1,30 @@
 -- Helper to check if the command is available
 local function has_gem(cmd)
   -- 1. Check if it's in the Gemfile.lock (for "bundle exec" projects)
+  local log = vim.lsp.log.debug
   if vim.fn.filereadable("Gemfile.lock") == 1 then
-    local lockfile_content = table.concat(vim.fn.readfile("Gemfile.lock"), "\n")
-    -- Look for the gem name in the specs section
-    if lockfile_content:find("%s" .. cmd .. "%s") then
-      return true
+    local lockfile_content = vim.fn.readfile("Gemfile.lock")
+    local pattern = "^%s*" .. vim.pesc(cmd) .. " %("
+    for _, line in ipairs(lockfile_content) do
+      if line:match(pattern) then
+        log("Command " .. cmd .. " found in Gemfile.lock!")
+        return true
+      end
     end
+    log("Command " .. cmd .. " NOT found in Gemfile.lock!")
+    return false
   end
+  return false
 end
 
 local function cmd_path(cmd, ...)
   local args = { ... }
-  local mise_path = vim.fn.expand("~/.local/share/mise/shims/" .. cmd)
 
   if has_gem(cmd) then
     return { "bundle", "exec", cmd, unpack(args) }
   end
+
+  local mise_path = vim.fn.expand("~/.local/share/mise/shims/" .. cmd)
 
   if vim.fn.executable(mise_path) == 1 then
     return { mise_path, unpack(args) }

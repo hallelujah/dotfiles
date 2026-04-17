@@ -38,6 +38,8 @@ map("n", "<leader>as", ":CopilotChatSave ", { desc = "Copilot Chat - Save Histor
 -- Quick save (saves automatically with a timestamp without prompting for a name)
 map("n", "<leader>aS", "<cmd>CopilotChatSave<cr>", { desc = "Copilot Chat - Quick Save" })
 
+-- Useful when stuck in Terminal on insert mode
+-- map("t", "<Esc>", [[<C-\><C-n>]], { desc = "Exit terminal mode" })
 -- Define the function
 local function copy_ruby_namespace()
   local node = vim.treesitter.get_node()

@@ -1,0 +1,135 @@
+#!/usr/bin/env bash
+# op-bridge: Unified 1Password CLI + SSH agent bridge
+# Works on: WSL (delegates to Windows), macOS, Fedora, NixOS (native op)
+
+set -euo pipefail
+
+# ---------------------------------------------------------------------------
+# Detect environment
+# ---------------------------------------------------------------------------
+IS_WSL=false
+IS_MACOS=false
+OS_ID="linux"
+
+if grep -qi microsoft /proc/version 2>/dev/null; then
+  IS_WSL=true
+elif [ "$(uname -s)" = "Darwin" ]; then
+  IS_MACOS=true
+fi
+
+if [ -f /etc/os-release ]; then
+  OS_ID="$(. /etc/os-release && echo "${ID:-linux}")"
+fi
+
+# ---------------------------------------------------------------------------
+# 1) op wrapper
+# ---------------------------------------------------------------------------
+if $IS_WSL; then
+  # Call Windows-side op.exe, strip carriage returns
+  if ! command -v op.exe >/dev/null 2>&1; then
+    cat >&2 <<'EOF'
+op.exe not found. Install 1Password CLI on Windows and add to PATH.
+  https://developer.1password.com/docs/cli/get-started/
+Enable in 1Password desktop app:
+  Settings → Developer → Integrate with 1Password CLI
+  Settings → Developer → Use the SSH agent
+EOF
+    return 1 2>/dev/null || exit 1
+  fi
+  op() { op.exe "$@" | tr -d '\r'; }
+else
+  # Bare metal: use native op
+  if ! command -v op >/dev/null 2>&1; then
+    cat >&2 <<EOF
+1Password CLI (op) not found. Install it:
+  macOS:  brew install --cask 1password-cli
+  Fedora: sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
+          sudo dnf install 1password-cli
+  NixOS:  nix-env -iA nixpkgs._1password-cli  (or add to configuration.nix)
+  https://developer.1password.com/docs/cli/get-started/
+EOF
+    return 1 2>/dev/null || exit 1
+  fi
+  op() { command op "$@"; }
+fi
+
+export -f op
+
+# ---------------------------------------------------------------------------
+# 2) SSH agent
+# ---------------------------------------------------------------------------
+setup_ssh_agent_wsl() {
+  # Bridge Windows 1Password SSH agent named pipe → Unix socket
+  local pipe='//./pipe/openssh-ssh-agent'
+  local sock="${HOME}/.ssh/agent.sock"
+
+  if ! command -v socat >/dev/null 2>&1; then
+    echo >&2 "socat not found. Install: sudo apt install socat / sudo dnf install socat"
+    return 1
+  fi
+
+  local relay
+  relay="$(command -v npiperelay.exe 2>/dev/null || true)"
+  if [ -z "$relay" ]; then
+    local win_home
+    win_home="$(wslpath "$(cmd.exe /C 'echo %USERPROFILE%' 2>/dev/null | tr -d '\r')")"
+    relay="${win_home}/go/bin/npiperelay.exe"
+    if [ ! -x "$relay" ]; then
+      cat >&2 <<'EOF'
+npiperelay.exe not found. On Windows:
+  go install github.com/jstarks/npiperelay@latest
+Ensure %USERPROFILE%\go\bin is in your Windows PATH.
+EOF
+      return 1
+    fi
+  fi
+
+  if [ -S "$sock" ] && SSH_AUTH_SOCK="$sock" ssh-add -l >/dev/null 2>&1; then
+    export SSH_AUTH_SOCK="$sock"
+    return 0
+  fi
+
+  rm -f "$sock"
+  mkdir -p "$(dirname "$sock")"
+
+  (setsid socat \
+    UNIX-LISTEN:"${sock}",fork,unlink-early \
+    EXEC:"${relay} -ei -s ${pipe}",nofork &) >/dev/null 2>&1
+
+  for _ in 1 2 3 4 5; do
+    [ -S "$sock" ] && break
+    sleep 0.2
+  done
+
+  export SSH_AUTH_SOCK="$sock"
+}
+
+setup_ssh_agent_native() {
+  # macOS: 1Password agent lives at a fixed path
+  # Linux: same path from 1Password 8
+  local op_sock
+
+  if $IS_MACOS; then
+    op_sock="${HOME}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+  else
+    op_sock="${HOME}/.1password/agent.sock"
+  fi
+
+  if [ -S "$op_sock" ]; then
+    export SSH_AUTH_SOCK="$op_sock"
+  else
+    echo >&2 "1Password SSH agent socket not found at: $op_sock"
+    echo >&2 "Enable in 1Password: Settings → Developer → Use the SSH agent"
+    return 1
+  fi
+}
+
+if $IS_WSL; then
+  setup_ssh_agent_wsl
+else
+  setup_ssh_agent_native
+fi
+
+echo "op-bridge: active [$(
+  $IS_WSL && echo "WSL→Windows" || echo "$(uname -s)/${OS_ID}"
+)] | SSH_AUTH_SOCK=${SSH_AUTH_SOCK:-unset}"

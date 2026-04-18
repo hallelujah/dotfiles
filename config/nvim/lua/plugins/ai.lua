@@ -59,7 +59,6 @@ return {
           },
         },
         -- List of providers
-        providers = {},
         interactions = {
           chat = { adapter = "anthropic" },
           inline = { adapter = "anthropic" },

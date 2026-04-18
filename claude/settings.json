@@ -1,0 +1,14 @@
+{
+  "enabledPlugins": {
+    "lua-lsp@claude-plugins-official": true
+  },
+  "skipAutoPermissionPrompt": true,
+  "permissions": {
+    "defaultMode": "auto"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "claude-powerline --style=tui"
+  }
+
+}

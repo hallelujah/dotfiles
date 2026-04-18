@@ -34,7 +34,7 @@ fi
 # ---------------------------------------------------------------------------
 setup_ssh_agent_wsl() {
   local pipe='//./pipe/openssh-ssh-agent'
-  local sock="${HOME}/.ssh/agent.sock"
+  local sock="${HOME}/.1password/agent.sock"
 
   if ! command -v socat >/dev/null 2>&1; then
     echo >&2 "socat not found."
@@ -126,9 +126,15 @@ setup_gpg_keychain() {
 
   [ -z "$gpg_keys" ] && return 0
 
-  # --agents gpg only: SSH auth is handled by 1Password socket
+  # Save 1Password SSH socket before keychain eval
+  local saved="${SSH_AUTH_SOCK:-}"
+
+  # --agents deprecated in 2.9.8; omit it — keychain detects gpg keys by fingerprint
   # shellcheck disable=SC2086
-  eval "$(keychain --eval --agents gpg --quiet --nogui $gpg_keys)"
+  eval "$(keychain --eval --quiet $gpg_keys --ssh-allow-gpg)"
+
+  # Restore 1Password SSH socket unconditionally
+  [ -n "$saved" ] && export SSH_AUTH_SOCK="$saved"
 }
 
 setup_gpg_keychain

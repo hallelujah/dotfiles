@@ -149,16 +149,15 @@ EOF
 }
 # ---------------------------------------------------------------------------
 # 4) GPG agent via keychain — once per login session
-# ---------------------------------------------------------------------------
+# -----------------------------------------------------------:qa
+# ----------------
 setup_gpg_keychain() {
   if ! command -v keychain >/dev/null 2>&1; then
     return 0
   fi
 
-  local gpg_keys
-  gpg_keys="$(gpg --list-secret-keys --with-colons 2>/dev/null |
-    awk -F: '/^sec/{print $5}' | tr '\n' ' ')"
-
+  input="$(gpg --list-secret-keys --with-colons 2>/dev/null | awk -F: '/^sec/{print $5}' | tr '\n' ' ')"
+  gpg_keys=($=input)
   [ -z "$gpg_keys" ] && return 0
 
   # Save 1Password SSH socket before keychain eval
@@ -166,8 +165,7 @@ setup_gpg_keychain() {
 
   # --agents deprecated in 2.9.8; omit it — keychain detects gpg keys by fingerprint
   # shellcheck disable=SC2086
-  eval "$(keychain --eval --quiet $gpg_keys --ssh-allow-gpg)"
-
+  eval "$(keychain --quiet --eval $gpg_keys)"
   # Restore 1Password SSH socket unconditionally
   [ -n "$saved" ] && export SSH_AUTH_SOCK="$saved"
 }

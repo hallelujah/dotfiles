@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 # op-bridge: Unified 1Password CLI + SSH agent bridge
 # Linked by rcup to ~/.bin/op-bridge
 # Platforms: WSL (→ Windows), macOS, Fedora, NixOS
@@ -100,18 +100,53 @@ fi
 # ---------------------------------------------------------------------------
 op_gpg_import() {
   local item_title="${1:-GPG Private Key}"
-  local key_data
-  key_data="$(op document get "$item_title" 2>/dev/null | tr -d '\r')"
+  local account key_data
 
-  if [ -z "$key_data" ]; then
-    echo >&2 "Could not fetch '${item_title}' from 1Password."
+  _choose_op_account() {
+    local accounts shorthands count choice
+    accounts=$(op account list --format=json)
+    shorthands=("${(@f)$(echo "$accounts" | jq -r '.[].url')}")
+    count=${#shorthands[@]}
+
+    if [[ "$count" -eq 1 ]]; then
+      _OP_ACCOUNT="${shorthands[1]}"
+      return
+    fi
+
+    echo "Select 1Password account:" >/dev/tty
+    for i in $(seq 1 $count); do
+      echo "  $i) ${shorthands[$i]}" >/dev/tty
+    done
+    read -r "choice?Enter number: " </dev/tty
+    _OP_ACCOUNT="${shorthands[$choice]}"
+  }
+
+  _OP_ACCOUNT=""
+  _choose_op_account
+  account="$_OP_ACCOUNT"
+  unset _OP_ACCOUNT
+
+  if [[ -z "$account" ]]; then
+    echo >&2 "No 1Password account selected."
+    return 1
+  fi
+
+  echo "Fetching '${item_title}' from account '${account}'..." >/dev/tty
+  key_data="$(op --account "$account" document get "$item_title" 2>/dev/null | tr -d '\r')"
+
+  if [[ -z "$key_data" ]]; then
+    cat >&2 <<EOF
+Could not fetch '${item_title}' from 1Password (account: $account).
+Store your key first:
+  gpg --export-secret-keys --armor KEY_ID \\
+    | op document create - --title "GPG Private Key"
+EOF
     return 1
   fi
 
   echo "$key_data" | gpg --import &&
     echo "GPG key imported. Open a new shell to activate signing."
 }
-
 # ---------------------------------------------------------------------------
 # 4) GPG agent via keychain — once per login session
 # ---------------------------------------------------------------------------

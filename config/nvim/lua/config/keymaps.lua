@@ -80,3 +80,12 @@ vim.keymap.set("n", "<leader>gY", function()
     return_sha1 = false, -- ensure this is false or omitted to get the URL, not just the SHA1
   })
 end, { desc = "Git Browse (Copy Permalink)" })
+
+-- Copy relative path and line number
+vim.keymap.set("n", "<leader>cp", function()
+  local path = vim.fn.expand("%")
+  local line = vim.fn.line(".")
+  local result = path .. ":" .. line
+  vim.fn.setreg("+", result)
+  vim.notify("Copied: " .. result)
+end, { desc = "Copy File Path and Line" })

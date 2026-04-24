@@ -19,7 +19,6 @@
 [core]
   excludesfile = ~/.gitignore
   autocrlf = input
-	sshCommand = ssh -i ~/.ssh/oyster.pub -o IdentitiesOnly=yes
 [merge]
   ff = only
 [commit]
@@ -30,6 +29,9 @@
   autosquash = true
 [include]
   path = ~/.gitconfig.local
+[include]
+  path = ~/.gitconfig.work
+  path = ~/.gitconfig.personal
 [diff]
   colorMoved = zebra
 [pull]

@@ -1,40 +1,56 @@
-return {
+local owners_cache = {}
 
+local function get_codeowners()
+  local bufnr = vim.api.nvim_get_current_buf()
+  if owners_cache[bufnr] then
+    return owners_cache[bufnr]
+  end
+
+  local filepath = vim.api.nvim_buf_get_name(bufnr)
+  if filepath == "" then
+    return ""
+  end
+
+  local ok, CO = pcall(require, "gh-co.co")
+  if not ok then
+    return ""
+  end
+
+  local owners = CO.matchFilesToCodeowner({ filepath })
+  if not owners then
+    owners_cache[bufnr] = ""
+    return ""
+  end
+  local filtered = vim.tbl_filter(function(o)
+    return o ~= ""
+  end, owners)
+  local result = #filtered > 0 and ("󰀎 " .. table.concat(filtered, ", ")) or ""
+  owners_cache[bufnr] = result
+  return result
+end
+
+vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost" }, {
+  callback = function(ev)
+    owners_cache[ev.buf] = nil
+  end,
+})
+
+return {
   {
     "comatory/gh-co.nvim",
     config = function()
-      -- Keymap to show the codeowner for the current file
       vim.keymap.set("n", "<leader>go", ":GhCoWho<CR>", { desc = "Show CODEOWNER" })
     end,
   },
   {
     "nvim-lualine/lualine.nvim",
     opts = function(_, opts)
-      -- Custom component to get the owners
-      local function get_codeowners()
-        -- Only run if gh-co is loaded and has data for the file
-        local status, ghco = pcall(require, "gh-co")
-        if not status then
-          return ""
-        end
-
-        -- Fetch owners (this varies slightly by plugin API)
-        -- gh-co provides owner data which we can format
-        local owners = ghco.get_owners(vim.api.nvim_get_current_buf())
-        if not owners or #owners == 0 then
-          return ""
-        end
-        return "👤 " .. table.concat(owners, ", ")
-      end
-
-      -- Insert into lualine_c (middle section) or lualine_x (right side)
-      table.insert(opts.sections.lualine_c, {
+      table.insert(opts.sections.lualine_x, {
         get_codeowners,
         cond = function()
-          -- Only show if the plugin is available
-          return package.loaded["gh-co"] ~= nil
+          return package.loaded["gh-co.co"] ~= nil and get_codeowners() ~= ""
         end,
-        color = { fg = "#ff9e64" }, -- Optional: set a specific color
+        color = { fg = "#ff9e64" },
       })
     end,
   },

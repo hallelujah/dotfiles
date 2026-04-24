@@ -19,6 +19,7 @@
 [core]
   excludesfile = ~/.gitignore
   autocrlf = input
+	sshCommand = ssh -i ~/.ssh/oyster.pub -o IdentitiesOnly=yes
 [merge]
   ff = only
 [commit]

@@ -89,3 +89,6 @@ vim.keymap.set("n", "<leader>cp", function()
   vim.fn.setreg("+", result)
   vim.notify("Copied: " .. result)
 end, { desc = "Copy File Path and Line" })
+
+-- Wayfinder
+vim.keymap.set("n", "<leader>wf", "<Plug>(WayfinderOpen)", { desc = "Wayfinder" })

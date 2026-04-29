@@ -1,6 +1,6 @@
 #!/bin/sh
 
-local_hook="$HOME"/.git_template.local/hooks/post-merge
+local_hook="$HOME/.git_template.local/hooks/post-merge"
 
 if [ -f "$local_hook" ]; then
   . "$local_hook"

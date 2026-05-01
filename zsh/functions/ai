@@ -1,0 +1,5 @@
+ai() {
+  local branch=$(git branch --show-current)
+  # Attempt to resume. If it fails (session not found), start a new one.
+  claude -r "$branch" || claude -n "$branch"
+}

@@ -1,12 +1,4 @@
 return {
-  -- CopilotChat.nvim (optional, for chat interface)
-  {
-    "CopilotC-Nvim/CopilotChat.nvim",
-    build = "make tiktoken",
-    dependencies = {
-      { "nvim-lua/plenary.nvim", branch = "master" },
-    },
-  },
   -- Configure mcphub before codecompanion
   {
     "ravitemer/mcphub.nvim",
@@ -69,6 +61,16 @@ return {
                 },
               })
             end,
+            gemini_cli = function()
+              local mise_path = vim.fn.expand("~/.local/share/mise/shims/gemini")
+
+              return require("codecompanion.adapters").extend("gemini_cli", {
+                commands = {
+                  default = { mise_path, "--acp" },
+                  yolo = { mise_path, "--yolo", "--acp" },
+                },
+              })
+            end,
           },
         },
         -- List of providers
@@ -82,6 +84,12 @@ return {
                 cmd = "claude",
                 args = {},
                 description = "Claude Code CLI",
+                provider = "terminal",
+              },
+              gemini_cli = {
+                cmd = "gemini",
+                args = {},
+                description = "Gemini CLI",
                 provider = "terminal",
               },
             },
@@ -115,6 +123,12 @@ return {
       { "<leader>ag", "<cmd>CodeCompanionActions<cr>", mode = { "n", "v" }, desc = "AI Actions" },
       { "<leader>ai", "<cmd>CodeCompanion<cr>", mode = "n", desc = "AI Inline Assistant" },
       { "<leader>at", "<cmd>CodeCompanionCLI<cr>", mode = "n", desc = "AI CLI Assistant" },
+      {
+        "<leader>aG",
+        "<cmd>CodeCompanionChat Toggle adapter=gemini_cli<cr>",
+        mode = { "n", "v" },
+        desc = "AI Chat (Gemini)",
+      },
     },
   },
 }

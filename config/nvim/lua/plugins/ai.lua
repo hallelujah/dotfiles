@@ -83,11 +83,9 @@ return {
         interactions = {
           chat = {
             adapter = "claude_code",
-            tools = { "mcp" },
           },
           inline = {
             adapter = "claude_code",
-            tools = { "mcp" },
           },
           cli = {
             agent = "claude_code",

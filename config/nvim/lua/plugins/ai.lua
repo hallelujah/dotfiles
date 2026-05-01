@@ -14,6 +14,7 @@ return {
   -- Claude via codecompanion.nvim
   {
     "olimorris/codecompanion.nvim",
+    version = "^19.12.0",
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
@@ -21,6 +22,8 @@ return {
       { "stevearc/sqlite.lua" },
     },
     opts = function()
+      local mcp_config = vim.fn.expand("~/.claude/.mcp.json")
+
       local opts = {
         display = {
           chat = {
@@ -30,6 +33,7 @@ return {
         send_code = true,
         use_default_actions = true,
         use_default_prompts = true,
+        prompt_library_dir = vim.fn.expand("~/.claude/prompts"),
 
         adapters = {
           acp = {
@@ -40,10 +44,14 @@ return {
                 commands = {
                   default = {
                     mise_path,
+                    "--mcp-config",
+                    mcp_config,
                   },
                   yolo = {
                     mise_path,
                     "--yolo",
+                    "--mcp-config",
+                    mcp_config,
                   },
                 },
                 env = {
@@ -109,15 +117,18 @@ return {
           mcphub = {
             callback = "mcphub.extensions.codecompanion",
             opts = {
-              -- MCP Tools
-              make_tools = true, -- Make individual tools (@server__tool) and server groups (@server) from MCP servers
-              show_server_tools_in_chat = true, -- Show individual tools in chat completion (when make_tools=true)
-              add_mcp_prefix_to_tool_names = false, -- Add mcp__ prefix (e.g `@mcp__github`, `@mcp__neovim__list_issues`)
-              show_result_in_chat = true, -- Show tool results directly in chat buffer
-              format_tool = nil, -- function(tool_name:string, tool: CodeCompanion.Agent.Tool) : string Function to format tool names to show in the chat buffer
-              -- MCP Resources
+              -- Tools disabled for ACP adapters: codecompanion filters tools out when adapter.type=="acp"
+              -- (codecompanion.nvim/lua/codecompanion/providers/completion/init.lua:206-215).
+              -- Instead, configure agents (claude-agent-acp, gemini) to connect to mcp-hub endpoint:
+              --   claude mcp add --transport http mcphub http://localhost:37373/mcp --scope user
+              --   gemini mcp add --transport http mcphub http://localhost:37373/mcp --scope user
+              make_tools = false,
+              show_server_tools_in_chat = false,
+              add_mcp_prefix_to_tool_names = false,
+              show_result_in_chat = false,
+              format_tool = nil,
+              -- Prompts and resources work over ACP (client-side text expansion)
               make_vars = true, -- Convert MCP resources to #variables for prompts
-              -- MCP Prompts
               make_slash_commands = true, -- Add MCP prompts as /slash commands
             },
           },

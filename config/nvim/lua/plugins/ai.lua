@@ -18,9 +18,15 @@ return {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
       "ravitemer/mcphub.nvim",
+      { "stevearc/sqlite.lua" },
     },
     opts = function()
       local opts = {
+        display = {
+          chat = {
+            show_history = true,
+          },
+        },
         send_code = true,
         use_default_actions = true,
         use_default_prompts = true,

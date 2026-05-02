@@ -10,11 +10,8 @@ return {
       local mcp_config = vim.fn.expand("~/.claude/mcp.json")
 
       local opts = {
-        display = {
-          chat = {
-            show_history = true,
-          },
-        },
+        -- ... [existing display, send_code, etc configuration] ...
+        display = { chat = { show_history = true } },
         send_code = true,
         use_default_actions = true,
         use_default_prompts = true,
@@ -24,34 +21,24 @@ return {
           acp = {
             claude_code = function()
               local mise_path = vim.fn.expand("~/.local/share/mise/shims/" .. "claude-agent-acp")
-
               return require("codecompanion.adapters").extend("claude_code", {
                 commands = {
-                  default = {
-                    mise_path,
-                    "--mcp-config",
-                    mcp_config,
-                  },
-                  yolo = {
-                    mise_path,
-                    "--yolo",
-                    "--mcp-config",
-                    mcp_config,
+                  default = { mise_path },
+                  yolo = { mise_path, "--yolo" },
+                },
+                defaults = {
+                  mcpServers = {
+                    mcphub = { type = "sse", url = "http://localhost:37373/mcp" },
                   },
                 },
                 env = {
                   CLAUDE_CODE_OAUTH_TOKEN = function()
                     local path = vim.fn.expand("~/.claude/.credentials.json")
                     local file = io.open(path, "r")
-                    if not file then
-                      return nil
-                    end
-
+                    if not file then return nil end
                     local content = file:read("*a")
                     file:close()
-
                     local ok, data = pcall(vim.json.decode, content)
-                    -- Accessing the nested 'claudeAiOauth' table you mentioned
                     if ok and data.claudeAiOauth and data.claudeAiOauth.accessToken then
                       return data.claudeAiOauth.accessToken
                     end
@@ -62,7 +49,6 @@ return {
             end,
             gemini_cli = function()
               local mise_path = vim.fn.expand("~/.local/share/mise/shims/gemini")
-
               return require("codecompanion.adapters").extend("gemini_cli", {
                 commands = {
                   default = { mise_path, "--acp" },
@@ -72,34 +58,27 @@ return {
             end,
           },
         },
-        -- List of providers
         interactions = {
-          chat = {
-            adapter = "claude_code",
-          },
-          inline = {
-            adapter = "claude_code",
-          },
+          chat = { adapter = "claude_code" },
+          inline = { adapter = "claude_code" },
           cli = {
             agent = "claude_code",
             agents = {
-              claude_code = {
-                cmd = "claude",
-                args = {},
-                description = "Claude Code CLI",
-                provider = "terminal",
-              },
-              gemini_cli = {
-                cmd = "gemini",
-                args = {},
-                description = "Gemini CLI",
-                provider = "terminal",
-              },
+              claude_code = { cmd = "claude", args = {}, description = "Claude Code CLI", provider = "terminal" },
+              gemini_cli = { cmd = "gemini", args = {}, description = "Gemini CLI", provider = "terminal" },
             },
           },
         },
-        opts = {
-          log_level = "DEBUG", -- or "TRACE"
+        opts = { log_level = "DEBUG" },
+        strategies = {
+          chat = {
+            slash_commands = {
+              ["mcp"] = {
+                description = "Pick an MCP capability from the hub",
+                callback = function(chat) require("mcp-picker").open_for_chat(chat) end,
+              },
+            },
+          },
         },
       }
       return opts

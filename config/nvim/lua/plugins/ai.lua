@@ -1,64 +1,47 @@
 return {
-  -- Configure mcphub before codecompanion
-  {
-    "ravitemer/mcphub.nvim",
-    dependencies = {
-      { "nvim-lua/plenary.nvim", branch = "master" },
-    },
-    config = function()
-      require("mcphub").setup({
-        servers_path = vim.fn.expand("~/.config/mcphub/servers.json"),
-      })
-    end,
-  },
-  -- Claude via codecompanion.nvim
   {
     "olimorris/codecompanion.nvim",
+    version = "^19.12.0",
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
-      "ravitemer/mcphub.nvim",
-      { "stevearc/sqlite.lua" },
     },
     opts = function()
       local opts = {
-        display = {
-          chat = {
-            show_history = true,
-          },
-        },
+        -- ... [existing display, send_code, etc configuration] ...
+        display = { chat = { show_history = true } },
         send_code = true,
         use_default_actions = true,
         use_default_prompts = true,
+        prompt_library_dir = vim.fn.expand("~/.claude/prompts"),
 
         adapters = {
           acp = {
             claude_code = function()
               local mise_path = vim.fn.expand("~/.local/share/mise/shims/" .. "claude-agent-acp")
-
               return require("codecompanion.adapters").extend("claude_code", {
                 commands = {
-                  default = {
-                    mise_path,
-                  },
-                  yolo = {
-                    mise_path,
-                    "--yolo",
+                  default = { mise_path },
+                  yolo = { mise_path, "--yolo" },
+                },
+                defaults = {
+                  mcpServers = {
+                    {
+                      name = "mcphub",
+                      command = "npx",
+                      args = { "-y", "mcp-remote", "http://localhost:37373/mcp" },
+                      env = {},
+                    },
                   },
                 },
                 env = {
                   CLAUDE_CODE_OAUTH_TOKEN = function()
                     local path = vim.fn.expand("~/.claude/.credentials.json")
                     local file = io.open(path, "r")
-                    if not file then
-                      return nil
-                    end
-
+                    if not file then return nil end
                     local content = file:read("*a")
                     file:close()
-
                     local ok, data = pcall(vim.json.decode, content)
-                    -- Accessing the nested 'claudeAiOauth' table you mentioned
                     if ok and data.claudeAiOauth and data.claudeAiOauth.accessToken then
                       return data.claudeAiOauth.accessToken
                     end
@@ -69,7 +52,6 @@ return {
             end,
             gemini_cli = function()
               local mise_path = vim.fn.expand("~/.local/share/mise/shims/gemini")
-
               return require("codecompanion.adapters").extend("gemini_cli", {
                 commands = {
                   default = { mise_path, "--acp" },
@@ -79,54 +61,26 @@ return {
             end,
           },
         },
-        -- List of providers
         interactions = {
           chat = {
             adapter = "claude_code",
-            tools = { "mcp" },
+            slash_commands = {
+              ["mcp"] = {
+                description = "Pick an MCP capability from the hub",
+                callback = function(chat) require("mcp-picker").open_for_chat(chat) end,
+              },
+            },
           },
-          inline = {
-            adapter = "claude_code",
-            tools = { "mcp" },
-          },
+          inline = { adapter = "claude_code" },
           cli = {
             agent = "claude_code",
             agents = {
-              claude_code = {
-                cmd = "claude",
-                args = {},
-                description = "Claude Code CLI",
-                provider = "terminal",
-              },
-              gemini_cli = {
-                cmd = "gemini",
-                args = {},
-                description = "Gemini CLI",
-                provider = "terminal",
-              },
+              claude_code = { cmd = "claude", args = {}, description = "Claude Code CLI", provider = "terminal" },
+              gemini_cli = { cmd = "gemini", args = {}, description = "Gemini CLI", provider = "terminal" },
             },
           },
         },
-        extensions = {
-          mcphub = {
-            callback = "mcphub.extensions.codecompanion",
-            opts = {
-              -- MCP Tools
-              make_tools = true, -- Make individual tools (@server__tool) and server groups (@server) from MCP servers
-              show_server_tools_in_chat = true, -- Show individual tools in chat completion (when make_tools=true)
-              add_mcp_prefix_to_tool_names = false, -- Add mcp__ prefix (e.g `@mcp__github`, `@mcp__neovim__list_issues`)
-              show_result_in_chat = true, -- Show tool results directly in chat buffer
-              format_tool = nil, -- function(tool_name:string, tool: CodeCompanion.Agent.Tool) : string Function to format tool names to show in the chat buffer
-              -- MCP Resources
-              make_vars = true, -- Convert MCP resources to #variables for prompts
-              -- MCP Prompts
-              make_slash_commands = true, -- Add MCP prompts as /slash commands
-            },
-          },
-        },
-        opts = {
-          log_level = "DEBUG", -- or "TRACE"
-        },
+        opts = { log_level = "DEBUG" },
       }
       return opts
     end,

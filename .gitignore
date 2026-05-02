@@ -1,3 +1,5 @@
 !bin
 .idea
 vim/bundle/
+.claude/settings.local.json
+.gemini/settings.json

@@ -22,6 +22,10 @@ This file provides standardized instructions for AI agents and tools interacting
 - The `config/` directory is symlinked to `~/.config/`.
 - Local overrides go in `~/.zshrc.local`, `~/.zshenv.local`, etc. (not tracked here).
 
+## MCP Configuration
+
+MCP servers are declared in `config/mcphub/servers.json` (tracked; symlinked to `~/.config/mcphub/servers.json`). The hub runs as a systemd `--user` service (`config/systemd/user/mcp-hub.service`). Secrets are resolved at startup via `bin/op-wrapper`, which uses a 1Password service account token (`OP_SERVICE_ACCOUNT_TOKEN` from `~/.config/environment.d/op-service-account.conf`). Claude and Gemini connect to the hub over SSE at `http://localhost:37373/mcp`. See `docs/centralized-mcp-config.md` for the full architecture and rollback steps.
+
 ## Guidelines
 
 - Always reference Neovim configuration files relative to `config/nvim`.

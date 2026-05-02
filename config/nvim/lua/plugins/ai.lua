@@ -7,8 +7,6 @@ return {
       "nvim-treesitter/nvim-treesitter",
     },
     opts = function()
-      local mcp_config = vim.fn.expand("~/.claude/mcp.json")
-
       local opts = {
         -- ... [existing display, send_code, etc configuration] ...
         display = { chat = { show_history = true } },
@@ -28,7 +26,12 @@ return {
                 },
                 defaults = {
                   mcpServers = {
-                    mcphub = { type = "sse", url = "http://localhost:37373/mcp" },
+                    {
+                      name = "mcphub",
+                      command = "npx",
+                      args = { "-y", "mcp-remote", "http://localhost:37373/mcp" },
+                      env = {},
+                    },
                   },
                 },
                 env = {
@@ -59,7 +62,15 @@ return {
           },
         },
         interactions = {
-          chat = { adapter = "claude_code" },
+          chat = {
+            adapter = "claude_code",
+            slash_commands = {
+              ["mcp"] = {
+                description = "Pick an MCP capability from the hub",
+                callback = function(chat) require("mcp-picker").open_for_chat(chat) end,
+              },
+            },
+          },
           inline = { adapter = "claude_code" },
           cli = {
             agent = "claude_code",
@@ -70,16 +81,6 @@ return {
           },
         },
         opts = { log_level = "DEBUG" },
-        strategies = {
-          chat = {
-            slash_commands = {
-              ["mcp"] = {
-                description = "Pick an MCP capability from the hub",
-                callback = function(chat) require("mcp-picker").open_for_chat(chat) end,
-              },
-            },
-          },
-        },
       }
       return opts
     end,

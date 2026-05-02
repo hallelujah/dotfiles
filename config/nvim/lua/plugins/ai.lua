@@ -18,9 +18,15 @@ return {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
       "ravitemer/mcphub.nvim",
+      { "stevearc/sqlite.lua" },
     },
     opts = function()
       local opts = {
+        display = {
+          chat = {
+            show_history = true,
+          },
+        },
         send_code = true,
         use_default_actions = true,
         use_default_prompts = true,
@@ -75,8 +81,14 @@ return {
         },
         -- List of providers
         interactions = {
-          chat = { adapter = "claude_code" },
-          inline = { adapter = "claude_code" },
+          chat = {
+            adapter = "claude_code",
+            tools = { "mcp" },
+          },
+          inline = {
+            adapter = "claude_code",
+            tools = { "mcp" },
+          },
           cli = {
             agent = "claude_code",
             agents = {

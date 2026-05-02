@@ -15,8 +15,16 @@ This file provides standardized instructions for AI agents and tools interacting
 
 - All Neovim-related configuration and customizations should be referenced relative to `config/nvim`.
 
+## Dotfiles Management
+
+- This repository is managed with [rcm](https://github.com/thoughtbot/rcm).
+- Run `rcup` to symlink all dotfiles from this repo to `~/`.
+- The `config/` directory is symlinked to `~/.config/`.
+- Local overrides go in `~/.zshrc.local`, `~/.zshenv.local`, etc. (not tracked here).
+
 ## Guidelines
 
 - Always reference Neovim configuration files relative to `config/nvim`.
 - When generating, editing, or referencing Neovim configuration, use the structure and linking method described above.
 - Ensure compatibility with the symlinked configuration approach for reproducible setups.
+- Do not suggest storing secrets or API keys in tracked dotfiles. Use `~/.zshrc.local` or `~/.gemini/.env` for sensitive values.

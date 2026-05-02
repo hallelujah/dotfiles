@@ -30,13 +30,13 @@ map(
 )
 
 -- Load an existing chat (opens your fuzzy finder)
-map("n", "<leader>al", "<cmd>CopilotChatLoad<cr>", { desc = "Copilot Chat - Load History" })
+map("n", "<leader>al", "<cmd>CodeCompanionChat Load<cr>", { desc = "AI Chat - Load History" })
 
 -- Save the current chat (leaves you in the command line to type a name)
-map("n", "<leader>as", ":CopilotChatSave ", { desc = "Copilot Chat - Save History" })
+map("n", "<leader>as", "<cmd>CodeCompanionChat Save<cr>", { desc = "AI Chat - Save History" })
 
 -- Quick save (saves automatically with a timestamp without prompting for a name)
-map("n", "<leader>aS", "<cmd>CopilotChatSave<cr>", { desc = "Copilot Chat - Quick Save" })
+-- map("n", "<leader>aS", "<cmd>CodeCompanionChat Save<cr>", { desc = "AI Chat - Quick Save" })
 
 -- Useful when stuck in Terminal on insert mode
 -- map("t", "<Esc>", [[<C-\><C-n>]], { desc = "Exit terminal mode" })

@@ -30,7 +30,8 @@
       "hideCWD": false,
       "hideModelInfo": false,
       "hideContextPercentage": false
-    }
+    },
+    "theme": "Atom One"
   },
   "tools": {
     "useRipgrep": true,
@@ -53,6 +54,11 @@
     "mcphub": {
       "url": "http://localhost:37373/mcp",
       "type": "sse"
+    }
+  },
+  "security": {
+    "auth": {
+      "selectedType": "oauth-personal"
     }
   }
 }

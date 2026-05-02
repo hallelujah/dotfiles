@@ -1,28 +1,13 @@
 return {
-  -- Configure mcphub before codecompanion
-  {
-    "ravitemer/mcphub.nvim",
-    dependencies = {
-      { "nvim-lua/plenary.nvim", branch = "master" },
-    },
-    config = function()
-      require("mcphub").setup({
-        servers_path = vim.fn.expand("~/.config/mcphub/servers.json"),
-      })
-    end,
-  },
-  -- Claude via codecompanion.nvim
   {
     "olimorris/codecompanion.nvim",
     version = "^19.12.0",
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
-      "ravitemer/mcphub.nvim",
-      { "stevearc/sqlite.lua" },
     },
     opts = function()
-      local mcp_config = vim.fn.expand("~/.claude/.mcp.json")
+      local mcp_config = vim.fn.expand("~/.claude/mcp.json")
 
       local opts = {
         display = {
@@ -110,26 +95,6 @@ return {
                 description = "Gemini CLI",
                 provider = "terminal",
               },
-            },
-          },
-        },
-        extensions = {
-          mcphub = {
-            callback = "mcphub.extensions.codecompanion",
-            opts = {
-              -- Tools disabled for ACP adapters: codecompanion filters tools out when adapter.type=="acp"
-              -- (codecompanion.nvim/lua/codecompanion/providers/completion/init.lua:206-215).
-              -- Instead, configure agents (claude-agent-acp, gemini) to connect to mcp-hub endpoint:
-              --   claude mcp add --transport http mcphub http://localhost:37373/mcp --scope user
-              --   gemini mcp add --transport http mcphub http://localhost:37373/mcp --scope user
-              make_tools = false,
-              show_server_tools_in_chat = false,
-              add_mcp_prefix_to_tool_names = false,
-              show_result_in_chat = false,
-              format_tool = nil,
-              -- Prompts and resources work over ACP (client-side text expansion)
-              make_vars = true, -- Convert MCP resources to #variables for prompts
-              make_slash_commands = true, -- Add MCP prompts as /slash commands
             },
           },
         },

@@ -1,5 +1,9 @@
 # MCPHub × CodeCompanion Integration Plan
 
+> **Superseded by `centralized-mcp-config.md`** (shipped 2026-05-02). `mcphub.nvim` has been
+> removed; mcp-hub now runs as a systemd `--user` service. This document is kept because the
+> rationale section on the ACP tool filter remains relevant context.
+
 ## Goal
 
 - **Single source of truth** for MCP servers: `~/.config/mcphub/servers.json` (mcphub.nvim).

@@ -1,0 +1,47 @@
+#!/bin/sh
+# Portable 1Password CLI wrapper.
+#
+# Resolution order:
+#   Service account token present (OP_SERVICE_ACCOUNT_TOKEN):
+#               mise shim (Linux native op uses the token — works headless)
+#   WSL interactive:
+#               Windows op.exe via PATH → WinGet glob → mise shim fallback
+#   Non-WSL:    mise shim → native op in PATH
+
+set -e
+
+MISE_SHIM="${HOME}/.local/share/mise/shims/op"
+
+# Service account token: Linux native op handles this without a desktop session.
+if [ -n "$OP_SERVICE_ACCOUNT_TOKEN" ]; then
+  [ -x "$MISE_SHIM" ] && exec "$MISE_SHIM" "$@"
+  exec op "$@"
+fi
+
+# Exclude our own directory from PATH to prevent infinite recursion when
+# searching for op / op.exe below.
+_op_path() {
+  printf '%s' "$PATH" | tr ':' '\n' | grep -vF "$(cd "$(dirname "$0")" && pwd)" | tr '\n' ':'
+}
+
+if grep -qi microsoft /proc/version 2>/dev/null; then
+  # WSL interactive: prefer Windows op.exe — accounts live in the desktop app.
+  # Probe PATH first, then the WinGet install glob (version-specific dirname).
+  WIN_OP="$(PATH="$(_op_path)" command -v op.exe 2>/dev/null)"
+  if [ -z "$WIN_OP" ]; then
+    WIN_OP="$(ls /mnt/c/Users/*/AppData/Local/Microsoft/WinGet/Packages/AgileBits.1Password.CLI*/op.exe 2>/dev/null | head -1)"
+  fi
+  if [ -n "$WIN_OP" ]; then
+    "$WIN_OP" "$@" | tr -d '\r'
+    exit $?
+  fi
+  [ -x "$MISE_SHIM" ] && exec "$MISE_SHIM" "$@"
+  echo >&2 "op.exe not found — install 1Password CLI on Windows or run: mise use -g 1password-cli"
+  exit 1
+else
+  # macOS / NixOS / Fedora / bare-metal Linux
+  [ -x "$MISE_SHIM" ] && exec "$MISE_SHIM" "$@"
+  OP="$(PATH="$(_op_path)" command -v op 2>/dev/null)" \
+    || { echo >&2 "op not found — install 1Password CLI or run: mise use -g 1password-cli"; exit 1; }
+  exec "$OP" "$@"
+fi

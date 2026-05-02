@@ -48,5 +48,11 @@
   },
   "experimental": {
     "worktrees": true
+  },
+  "mcpServers": {
+    "mcphub": {
+      "url": "http://localhost:37373/mcp",
+      "type": "sse"
+    }
   }
 }

@@ -1,0 +1,29 @@
+{
+  "mcpServers": {
+    "figma-mcp": {
+      "args": [
+        "-y",
+        "figma-mcp-full-server"
+      ],
+      "command": "npx",
+      "env": {
+        "FIGMA_TOKEN": "${cmd: op-wrapper read 'op://Propitech/Figma API Key/credential' --account my.1password.com}"
+      }
+    },
+    "github": {
+      "headers": {
+        "Authorization": "Bearer ${cmd: op-wrapper read 'op://Propitech/Github API Key/credential' --account my.1password.com}"
+      },
+      "url": "https://api.githubcopilot.com/mcp/"
+    },
+    "linear": {
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.linear.app/mcp"
+      ],
+      "command": "npx",
+      "env": {}
+    }
+  }
+}

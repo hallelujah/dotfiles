@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "mcphub": {
-      "type": "http",
+      "type": "sse",
       "url": "http://localhost:37373/mcp"
     }
   }

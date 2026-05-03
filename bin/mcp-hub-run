@@ -1,0 +1,20 @@
+#!/bin/sh
+# mcp-hub-run: launcher used by systemd (Linux) and launchd (macOS).
+# Sources the OP service-account env file (untracked) before exec'ing mcp-hub
+# so the hub can resolve op:// secrets headlessly.
+
+set -e
+
+ENV_FILE="${HOME}/.config/environment.d/op-service-account.conf"
+if [ -f "$ENV_FILE" ]; then
+  set -a
+  . "$ENV_FILE"
+  set +a
+fi
+
+PATH="${HOME}/.bin:${HOME}/.local/share/mise/shims:${HOME}/.local/bin:/usr/local/bin:/usr/bin:/bin"
+export PATH
+
+exec "${HOME}/.local/share/mise/shims/mcp-hub" \
+  --port 37373 \
+  --config "${HOME}/.config/mcphub/servers.json"

@@ -4,9 +4,9 @@ After=default.target
 
 [Service]
 Type=simple
-# Ensure 1Password CLI and mise shims are on PATH so ${cmd: op read ...} resolves.
-Environment=PATH=%h/.bin:%h/.local/share/mise/shims:%h/.local/bin:/usr/local/bin:/usr/bin:/bin
-ExecStart=%h/.local/share/mise/shims/mcp-hub --port 37373 --config %h/.config/mcphub/servers.json
+# Wrapper sets PATH and sources OP_SERVICE_ACCOUNT_TOKEN; same wrapper is used
+# by the macOS LaunchAgent at config/launchd/com.user.mcp-hub.plist.
+ExecStart=%h/.bin/mcp-hub-run
 Restart=on-failure
 RestartSec=3
 

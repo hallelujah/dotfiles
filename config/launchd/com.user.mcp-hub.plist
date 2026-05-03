@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  macOS LaunchAgent for mcp-hub. Symlink into ~/Library/LaunchAgents/ then load:
+    ln -sfn "$HOME/.config/launchd/com.user.mcp-hub.plist" \
+            "$HOME/Library/LaunchAgents/com.user.mcp-hub.plist"
+    launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/com.user.mcp-hub.plist"
+
+  Unload with:
+    launchctl bootout "gui/$(id -u)/com.user.mcp-hub"
+
+  ProgramArguments uses /bin/sh -c so $HOME expands at runtime — launchd does
+  not expand env vars in ProgramArguments directly.
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.user.mcp-hub</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/sh</string>
+        <string>-c</string>
+        <string>exec "$HOME/.bin/mcp-hub-run"</string>
+    </array>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <dict>
+        <key>SuccessfulExit</key>
+        <false/>
+    </dict>
+
+    <key>ThrottleInterval</key>
+    <integer>3</integer>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/mcp-hub.out.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/tmp/mcp-hub.err.log</string>
+</dict>
+</plist>

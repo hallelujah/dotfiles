@@ -24,7 +24,29 @@ This file provides standardized instructions for AI agents and tools interacting
 
 ## MCP Configuration
 
-MCP servers are declared in `config/mcphub/servers.json` (tracked; symlinked to `~/.config/mcphub/servers.json`). The hub runs as a systemd `--user` service (`config/systemd/user/mcp-hub.service`). Secrets are resolved at startup via `bin/op-wrapper`, which uses a 1Password service account token (`OP_SERVICE_ACCOUNT_TOKEN` from `~/.config/environment.d/op-service-account.conf`). Claude and Gemini connect to the hub over SSE at `http://localhost:37373/mcp`. See `docs/centralized-mcp-config.md` for the full architecture and rollback steps.
+MCP servers are declared in `config/mcphub/servers.json` (tracked; symlinked to `~/.config/mcphub/servers.json`). The hub is launched by `bin/mcp-hub-run`, a wrapper that loads `OP_SERVICE_ACCOUNT_TOKEN` from `~/.config/environment.d/op-service-account.conf` and execs `mcp-hub` against the registry. Both the Linux and macOS service definitions invoke this wrapper. Secrets are resolved at startup via `bin/op-wrapper`. Claude and Gemini connect to the hub over SSE at `http://localhost:37373/mcp`. See `docs/centralized-mcp-config.md` for the full architecture and rollback steps.
+
+OAuth-based servers (e.g. Linear) require a one-time interactive bootstrap so the systemd/launchd unit can refresh tokens unattended. Run `bin/mcp-auth-bootstrap [URL]` from a terminal with browser access; it caches tokens under `~/.mcp-auth/` (lives in `$HOME`, not tracked) and the long-lived refresh token is what keeps the hub working headlessly thereafter.
+
+### Service install
+
+**Linux (systemd-user)** — `config/systemd/user/mcp-hub.service` is symlinked into `~/.config/systemd/user/` by `rcup`. Enable with:
+
+```sh
+systemctl --user daemon-reload
+systemctl --user enable --now mcp-hub
+```
+
+**macOS (launchd)** — `config/launchd/com.user.mcp-hub.plist` is not auto-installed by `rcup` (Apple looks in `~/Library/LaunchAgents/`, which must not be a tracked symlink target). Install with:
+
+```sh
+ln -sfn "$HOME/.config/launchd/com.user.mcp-hub.plist" \
+        "$HOME/Library/LaunchAgents/com.user.mcp-hub.plist"
+launchctl bootstrap "gui/$(id -u)" \
+        "$HOME/Library/LaunchAgents/com.user.mcp-hub.plist"
+```
+
+Unload with `launchctl bootout "gui/$(id -u)/com.user.mcp-hub"`. Logs go to `/tmp/mcp-hub.{out,err}.log`.
 
 ## Guidelines
 

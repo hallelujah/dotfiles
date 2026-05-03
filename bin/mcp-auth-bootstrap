@@ -1,0 +1,82 @@
+#!/bin/sh
+# mcp-auth-bootstrap: Pre-authenticate an OAuth-based MCP server so the
+# tokens cache (~/.mcp-auth/) is populated before headless mcp-hub picks it up.
+#
+# Usage: mcp-auth-bootstrap [URL] [--force]
+# Default URL: https://mcp.linear.app/mcp
+#
+# Spawns `npx mcp-remote <URL>` in the foreground; mcp-remote opens a browser
+# for OAuth. As soon as ~/.mcp-auth/mcp-remote-*/<hash>_tokens.json appears
+# with a valid access_token, the bridge is killed and the script exits.
+# The cached refresh token is what keeps the systemd hub working unattended.
+
+set -e
+
+URL=""
+FORCE=0
+for arg in "$@"; do
+  case "$arg" in
+    --force) FORCE=1 ;;
+    -h|--help) sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -*) echo >&2 "Unknown flag: $arg"; exit 2 ;;
+    *) URL="$arg" ;;
+  esac
+done
+URL="${URL:-https://mcp.linear.app/mcp}"
+
+command -v jq >/dev/null 2>&1 || { echo >&2 "jq not found"; exit 1; }
+command -v npx >/dev/null 2>&1 || { echo >&2 "npx not found"; exit 1; }
+
+if command -v md5sum >/dev/null 2>&1; then
+  HASH=$(printf '%s' "$URL" | md5sum | awk '{print $1}')
+elif command -v md5 >/dev/null 2>&1; then
+  HASH=$(printf '%s' "$URL" | md5 | awk '{print $NF}')
+else
+  echo >&2 "md5sum/md5 not found"; exit 1
+fi
+
+CACHE_ROOT="${HOME}/.mcp-auth"
+
+find_tokens() {
+  for d in $(ls -dt "$CACHE_ROOT"/mcp-remote-* 2>/dev/null); do
+    f="$d/${HASH}_tokens.json"
+    if [ -f "$f" ]; then printf '%s\n' "$f"; return; fi
+  done
+}
+
+EXISTING=$(find_tokens || true)
+if [ -n "$EXISTING" ] && [ "$FORCE" -eq 0 ] \
+   && jq -e '.access_token' "$EXISTING" >/dev/null 2>&1; then
+  echo "Tokens already cached: $EXISTING"
+  echo "Re-run with --force to redo OAuth."
+  exit 0
+fi
+
+mkdir -p "$CACHE_ROOT"
+echo "Bootstrapping OAuth for: $URL"
+echo "A browser window will open. Complete consent; this script will detect the new tokens and exit."
+echo
+
+npx -y mcp-remote "$URL" &
+PID=$!
+trap 'kill $PID 2>/dev/null || true; wait $PID 2>/dev/null || true' EXIT INT TERM
+
+i=0
+while [ "$i" -lt 180 ]; do
+  if ! kill -0 "$PID" 2>/dev/null; then
+    echo >&2 "mcp-remote exited before tokens appeared."
+    exit 1
+  fi
+  TOKENS=$(find_tokens || true)
+  if [ -n "$TOKENS" ] && jq -e '.access_token' "$TOKENS" >/dev/null 2>&1; then
+    echo
+    echo "Tokens written: $TOKENS"
+    echo "Restart the hub:  systemctl --user restart mcp-hub"
+    exit 0
+  fi
+  sleep 1
+  i=$((i + 1))
+done
+
+echo >&2 "Timed out after 180s. Did the OAuth flow complete in the browser?"
+exit 1

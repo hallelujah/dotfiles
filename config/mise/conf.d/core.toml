@@ -1,8 +1,8 @@
 [tools]
 "1password-cli" = "latest"
-"gem:overmind" = "latest"
 "gem:ruby-lsp" = "latest"
 "gem:ruby-lsp-rails" = "latest"
+"github:DarthSim/overmind" = "latest"
 "npm:@agentclientprotocol/claude-agent-acp" = "latest"
 "npm:mcp-hub" = "latest"
 ast-grep = "latest"

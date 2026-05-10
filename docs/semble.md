@@ -219,10 +219,54 @@ token reduction relative to grep+read.
 | `hooks/post-up`                            | `uv tool install --upgrade 'semble[mcp]'`, model warm-up, mcp-hub auto-restart on `servers.json` change |
 | `bin/semble-here`                          | CLI shorthand for searching the current tree            |
 | `claude/commands/semble.md`                | Claude Code slash command `/semble <query>`             |
+| `bin/semble-init-project`                  | SessionStart hook: `semble init` per project, idempotent |
 | `config/nvim/lua/semble.lua`               | Neovim integration logic (`:Semble`, `:SembleRelated`)  |
 | `config/nvim/lua/plugins/semble.lua`       | Lazy.nvim spec; binds `<leader>ss` and `<leader>sr`     |
 | `AGENTS.md` → "Code Search"                | Tells agents to prefer semble over grep+read            |
 | `docs/semble.md`                           | This document                                           |
+
+## Per-project sub-agent (`semble init`)
+
+Upstream semble ships a Claude Code sub-agent definition that teaches the
+parent agent to delegate code-search to a `semble-search` sub-agent. Drop
+it into a project with:
+
+```sh
+semble init                                     # writes .claude/agents/semble-search.md
+```
+
+`bin/semble-init-project` does this idempotently as a SessionStart hook,
+so any project you open in Claude Code automatically gets the sub-agent.
+Wire it into your local Claude settings (untracked, machine-local), e.g.
+`~/dotfiles-local/claude/settings.json`:
+
+```jsonc
+"hooks": {
+  "SessionStart": [
+    {
+      "hooks": [
+        {
+          "type": "command",
+          "command": "/home/<you>/bin/semble-init-project",
+          "timeout": 10,
+          "statusMessage": "Ensuring semble sub-agent..."
+        }
+      ]
+    }
+  ]
+}
+```
+
+The script is a no-op when:
+
+- `.claude/agents/semble-search.md` already exists, or
+- the cwd / `$CLAUDE_PROJECT_DIR` doesn't look like a project root
+  (no `.git`, `AGENTS.md`, `pyproject.toml`, `package.json`, `Cargo.toml`,
+  `Gemfile`, or `go.mod`), or
+- `semble` isn't installed.
+
+`.claude/agents/` is gitignored at the repo root, so the generated file
+never lands in your dotfiles history.
 
 ## Links
 

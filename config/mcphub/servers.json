@@ -26,12 +26,8 @@
       "env": {}
     },
     "semble": {
-      "command": "uvx",
-      "args": [
-        "--from",
-        "semble[mcp]",
-        "semble"
-      ],
+      "command": "semble",
+      "args": [],
       "env": {}
     }
   }

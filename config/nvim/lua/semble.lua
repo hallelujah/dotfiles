@@ -12,6 +12,19 @@
 
 local M = {}
 
+local function semble_bin()
+  if vim.fn.executable("semble") == 1 then
+    return "semble"
+  end
+  -- `uv tool install` drops binaries here; nvim launched from GUIs / WSL
+  -- often lacks ~/.local/bin on PATH.
+  local fallback = vim.env.HOME .. "/.local/bin/semble"
+  if vim.fn.executable(fallback) == 1 then
+    return fallback
+  end
+  return nil
+end
+
 local function project_root()
   local out = vim.fn.systemlist({ "git", "rev-parse", "--show-toplevel" })
   if vim.v.shell_error == 0 and out[1] and out[1] ~= "" then
@@ -54,13 +67,17 @@ local function parse_qf(lines, root)
 end
 
 local function run(args, title)
-  if vim.fn.executable("semble") == 0 then
-    vim.notify("semble: binary not found on PATH (rcup?)", vim.log.levels.ERROR)
+  local bin = semble_bin()
+  if not bin then
+    vim.notify(
+      "semble: binary not found. Install with `uv tool install 'semble[mcp]'` or run rcup.",
+      vim.log.levels.ERROR
+    )
     return
   end
   local root = project_root()
   vim.notify("semble: " .. title .. " in " .. root, vim.log.levels.INFO)
-  local result = vim.system({ "semble", unpack(args) }, { text = true }):wait()
+  local result = vim.system({ bin, unpack(args) }, { text = true }):wait()
   local out = (result.stdout or "") .. (result.stderr or "")
   local lines = vim.split(out, "\n", { plain = true, trimempty = false })
   open_scratch(lines, "semble://" .. title)

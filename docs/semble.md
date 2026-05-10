@@ -47,12 +47,17 @@ uvx --from "semble[mcp]" semble       # ephemeral, no persistent install
 In this repo `hooks/post-up` runs the following on every `rcup`, idempotently:
 
 ```sh
-uv tool install --upgrade 'semble[mcp]'
+uv tool install --python 3.13 --upgrade 'semble[mcp]'
 ```
 
-That puts a persistent `semble` binary on `$PATH` (under `~/.local/bin`,
-managed by `uv tool`) and warms uv's package cache so the MCP server's
-`uvx` invocation never has to download.
+That puts a persistent `semble` binary at `~/.local/bin/semble` (managed
+by `uv tool`). The mcphub entry then invokes that binary directly, so no
+ephemeral `uvx` env is built per launch.
+
+**Why pin Python 3.13?** semble pulls `chonkie` → `tokie`, which builds via
+PyO3 ≤ 3.13. uv defaults to the newest interpreter available (3.14 as of
+writing) and the wheel build fails. `--python 3.13` forces uv to provision
+3.13 if missing.
 
 ## CLI
 
@@ -129,11 +134,18 @@ Registered centrally in `config/mcphub/servers.json`:
 
 ```json
 "semble": {
-  "command": "uvx",
-  "args": ["--from", "semble[mcp]", "semble"],
+  "command": "semble",
+  "args": [],
   "env": {}
 }
 ```
+
+Bare `semble` (no subcommand) starts the MCP server over stdio. The
+`{search, find-related, init}` subcommands route to the regular CLI.
+
+`bin/mcp-hub-run` (the launcher) prepends `~/.local/bin` to PATH so the
+service unit finds the binary even when launched headlessly by systemd /
+launchd.
 
 Claude Code, Gemini, and any other agent talk to the mcphub SSE bridge
 (`http://localhost:37373/mcp`); semble surfaces there as

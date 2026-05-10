@@ -10,12 +10,15 @@ fi
 # Install/upgrade semble (code-search MCP server) idempotently.
 # Used by the mcphub entry "semble" via `uvx --from semble[mcp] semble`.
 if command -v uv >/dev/null 2>&1; then
-  uv tool install --upgrade 'semble[mcp]' >/dev/null
+  # Pin Python 3.13: tokie (transitive via chonkie) builds against PyO3 that
+  # caps at Python 3.13. uv defaults to the latest available interpreter.
+  uv tool install --python 3.13 --upgrade 'semble[mcp]' >/dev/null
 
   # Pre-warm the potion-code-16M embedding model so first MCP call is fast.
   # Indexes this repo (tiny, sub-second) which downloads the model into uv cache.
-  if command -v semble >/dev/null 2>&1 && [ -d "$HOME/dotfiles" ]; then
-    semble search 'init' "$HOME/dotfiles" --top-k 1 >/dev/null 2>&1 || true
+  semble_bin="$HOME/.local/bin/semble"
+  if [ -x "$semble_bin" ] && [ -d "$HOME/dotfiles" ]; then
+    "$semble_bin" search 'init' "$HOME/dotfiles" --top-k 1 >/dev/null 2>&1 || true
   fi
 fi
 

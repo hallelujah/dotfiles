@@ -18,7 +18,23 @@ return {
         adapters = {
           acp = {
             claude_code = function()
+              local get_token = function()
+                local path = vim.fn.expand("~/.claude/.credentials.json")
+                local file = io.open(path, "r")
+                if not file then
+                  return nil
+                end
+                local content = file:read("*a")
+                file:close()
+                local ok, data = pcall(vim.json.decode, content)
+                if ok and data.claudeAiOauth and data.claudeAiOauth.accessToken then
+                  return data.claudeAiOauth.accessToken
+                end
+                return nil
+              end
+
               local mise_path = vim.fn.expand("~/.local/share/mise/shims/" .. "claude-agent-acp")
+
               return require("codecompanion.adapters").extend("claude_code", {
                 commands = {
                   default = { mise_path },
@@ -35,18 +51,7 @@ return {
                   },
                 },
                 env = {
-                  CLAUDE_CODE_OAUTH_TOKEN = function()
-                    local path = vim.fn.expand("~/.claude/.credentials.json")
-                    local file = io.open(path, "r")
-                    if not file then return nil end
-                    local content = file:read("*a")
-                    file:close()
-                    local ok, data = pcall(vim.json.decode, content)
-                    if ok and data.claudeAiOauth and data.claudeAiOauth.accessToken then
-                      return data.claudeAiOauth.accessToken
-                    end
-                    return nil
-                  end,
+                  CLAUDE_CODE_OAUTH_TOKEN = get_token,
                 },
               })
             end,
@@ -67,7 +72,9 @@ return {
             slash_commands = {
               ["mcp"] = {
                 description = "Pick an MCP capability from the hub",
-                callback = function(chat) require("mcp-picker").open_for_chat(chat) end,
+                callback = function(chat)
+                  require("mcp-picker").open_for_chat(chat)
+                end,
               },
             },
           },

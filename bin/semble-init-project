@@ -1,0 +1,38 @@
+#!/bin/sh
+# semble-init-project — idempotently drop .claude/agents/semble-search.md
+# into the current Claude Code project so the `semble-search` sub-agent
+# is available. Wired as a SessionStart hook.
+#
+# Behaviour:
+#   - No-op if the file already exists.
+#   - No-op if not in a recognisable project root (avoids littering $HOME
+#     or random cwds with a .claude/ dir).
+#   - No-op if the `semble` binary is not installed.
+#   - Always exits 0 so it never blocks a Claude session.
+
+set -eu
+
+root="${CLAUDE_PROJECT_DIR:-$PWD}"
+target="$root/.claude/agents/semble-search.md"
+
+[ -e "$target" ] && exit 0
+
+is_project=0
+for marker in .git AGENTS.md pyproject.toml package.json Cargo.toml Gemfile go.mod; do
+  if [ -e "$root/$marker" ]; then
+    is_project=1
+    break
+  fi
+done
+[ "$is_project" = 1 ] || exit 0
+
+if command -v semble >/dev/null 2>&1; then
+  bin=semble
+elif [ -x "$HOME/.local/bin/semble" ]; then
+  bin="$HOME/.local/bin/semble"
+else
+  exit 0
+fi
+
+cd "$root" && "$bin" init >/dev/null 2>&1 || true
+exit 0

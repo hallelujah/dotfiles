@@ -7,6 +7,40 @@ if [ -f "$HOME/.config/nvim/init.lua" ]; then
   nvim --headless "+Lazy! sync" +qa
 fi
 
+# Install/upgrade semble (code-search MCP server) idempotently.
+# Used by the mcphub entry "semble" via `uvx --from semble[mcp] semble`.
+if command -v uv >/dev/null 2>&1; then
+  # Pin Python 3.13: tokie (transitive via chonkie) builds against PyO3 that
+  # caps at Python 3.13. uv defaults to the latest available interpreter.
+  uv tool install --python 3.13 --upgrade 'semble[mcp]' >/dev/null
+
+  # Pre-warm the potion-code-16M embedding model so first MCP call is fast.
+  # Indexes this repo (tiny, sub-second) which downloads the model into uv cache.
+  semble_bin="$HOME/.local/bin/semble"
+  if [ -x "$semble_bin" ] && [ -d "$HOME/dotfiles" ]; then
+    "$semble_bin" search 'init' "$HOME/dotfiles" --top-k 1 >/dev/null 2>&1 || true
+  fi
+fi
+
+# Restart mcp-hub when config/mcphub/servers.json changed since last rcup.
+servers="$HOME/.config/mcphub/servers.json"
+marker="$HOME/.cache/dotfiles/mcphub-servers.mtime"
+if [ -e "$servers" ]; then
+  mkdir -p "$(dirname "$marker")"
+  current=$(stat -c %Y "$servers" 2>/dev/null || stat -f %m "$servers" 2>/dev/null || echo 0)
+  previous=$(cat "$marker" 2>/dev/null || echo 0)
+  if [ "$current" != "$previous" ]; then
+    if command -v systemctl >/dev/null 2>&1 && \
+       systemctl --user is-active mcp-hub >/dev/null 2>&1; then
+      systemctl --user restart mcp-hub
+    elif command -v launchctl >/dev/null 2>&1 && \
+         launchctl print "gui/$(id -u)/com.user.mcp-hub" >/dev/null 2>&1; then
+      launchctl kickstart -k "gui/$(id -u)/com.user.mcp-hub"
+    fi
+    echo "$current" > "$marker"
+  fi
+fi
+
 reset -Q
 
 if [ -f "$HOME/.git_template/HEAD" ] && \

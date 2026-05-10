@@ -24,6 +24,11 @@
       ],
       "command": "npx",
       "env": {}
+    },
+    "semble": {
+      "command": "semble",
+      "args": [],
+      "env": {}
     }
   }
 }

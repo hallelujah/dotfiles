@@ -50,18 +50,9 @@ Unload with `launchctl bootout "gui/$(id -u)/com.user.mcp-hub"`. Logs go to `/tm
 
 ## Code Search (semble)
 
-[semble](https://github.com/MinishLab/semble) is a fast, local, embedding-based code search tool optimized for AI agents (~98% fewer tokens than grep + read). It is exposed to Claude Code (and any other agent connected to the hub) as the `semble` MCP server in `config/mcphub/servers.json` and is auto-installed/upgraded by `hooks/post-up` via `uv tool install --upgrade 'semble[mcp]'`.
+Semble is exposed to all agents as `mcp__mcphub__semble__search` / `mcp__mcphub__semble__find_related` via the mcphub at `http://localhost:37373/mcp`. Registered in `config/mcphub/servers.json`; auto-installed/upgraded by `hooks/post-up` via `uv tool install --upgrade 'semble[mcp]'`.
 
-**Prefer semble over `grep` + `Read` when locating code by intent or concept.** Use `grep` only for exact-string lookups (literal identifiers, error messages, log lines).
-
-CLI usage from a shell:
-
-```sh
-semble search "where is the auth middleware" .
-semble find-related path/to/file.py 42 .
-```
-
-After editing `config/mcphub/servers.json`, restart the hub to pick up the new server: `systemctl --user restart mcp-hub` (Linux) or `launchctl kickstart -k "gui/$(id -u)/com.user.mcp-hub"` (macOS).
+After editing `config/mcphub/servers.json`, restart the hub: `systemctl --user restart mcp-hub` (Linux) or `launchctl kickstart -k "gui/$(id -u)/com.user.mcp-hub"` (macOS).
 
 ## Guidelines
 

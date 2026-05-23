@@ -126,6 +126,19 @@ return {
           mason = false,
           cmd = cmd_path("rubocop", "--lsp"),
         },
+        tailwindcss = (function()
+          local cfg = {
+            filetypes_include = { "ruby", "eruby" },
+          }
+          local path = vim.fn.expand("~/.config/tailwindcss-lsp.config.json")
+          if vim.fn.filereadable(path) == 1 then
+            local ok, decoded = pcall(vim.fn.json_decode, vim.fn.readfile(path))
+            if ok and type(decoded) == "table" then
+              cfg.settings = decoded
+            end
+          end
+          return cfg
+        end)(),
       },
     },
   },

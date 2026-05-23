@@ -2,6 +2,7 @@
   "tailwindCSS": {
     "includeLanguages": {
       "erb": "html",
+      "eruby": "html",
       "ftl": "html",
       "jinja": "html",
       "jinja2": "html",
@@ -50,35 +51,26 @@
       "configFile": null,
       "classRegex": [
         [
-          "def\\s+\\w+_class\\s*=\\s*(['\"`][^'\"`]*['\"`])",
+          "def\\s+\\w+_class(?:es)?\\s*=\\s*(['\"`][^'\"`]*['\"`])",
           "['\"`]([^'\"`]*)['\"`]"
         ],
         [
-          "def\\s+\\w+_class\\b[\\s\\S]*?%w\\[([\\s\\S]*?)\\][\\s\\S]*?end",
+          "def\\s+\\w+_class(?:es)?\\b[\\s\\S]*?%w\\[([\\s\\S]*?)\\][\\s\\S]*?end",
           "(\\S+)"
         ],
         [
-          "def\\s+\\w+_class\\b[\\s\\S]*?\\[([\\s\\S]*?)\\][\\s\\S]*?end",
+          "def\\s+\\w+_class(?:es)?\\b[\\s\\S]*?\\[([\\s\\S]*?)\\][\\s\\S]*?end",
+          "['\"`]([^'\"`]*)['\"`]"
+        ],
+        [
+          "[A-Z][A-Z_]*_CLASS(?:ES)?\\s*=\\s*%w\\[([\\s\\S]*?)\\]",
+          "(\\S+)"
+        ],
+        [
+          "[A-Z][A-Z_]*_CLASS(?:ES)?\\s*=\\s*\\[([\\s\\S]*?)\\]",
           "['\"`]([^'\"`]*)['\"`]"
         ]
       ]
-    }
-  },
-  "eslint.debug": true,
-  "editor": {
-    "tabSize": 2,
-    "formatOnSave": true,
-    "formatOnSaveTimeout": 5000,
-    "codeActionsOnSave": {
-      "source.fixAll": "always",
-      "source.organizeImports": true
-    },
-    "insertSpaces": true,
-    "detectIndentation": false,
-    "rulers": [80, 120],
-    "wordWrap": "on",
-    "minimap": {
-      "enabled": false
     }
   }
 }

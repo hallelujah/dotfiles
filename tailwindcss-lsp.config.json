@@ -1,0 +1,84 @@
+{
+  "tailwindCSS": {
+    "includeLanguages": {
+      "erb": "html",
+      "ftl": "html",
+      "jinja": "html",
+      "jinja2": "html",
+      "smarty": "html",
+      "tmpl": "gohtml",
+      "cshtml": "html",
+      "vbhtml": "html",
+      "razor": "html",
+      "ruby": "html"
+    },
+    "files": {
+      "exclude": [
+        "**/.git/**",
+        "**/.hg/**",
+        "**/.svn/**",
+        "**/node_modules/**",
+        "**/.yarn/**",
+        "**/.venv/**",
+        "**/venv/**",
+        "**/.next/**",
+        "**/.parcel-cache/**",
+        "**/.svelte-kit/**",
+        "**/.turbo/**",
+        "**/__pycache__/**"
+      ]
+    },
+    "emmetCompletions": false,
+    "classAttributes": ["class", "className", "ngClass"],
+    "colorDecorators": true,
+    "showPixelEquivalents": true,
+    "rootFontSize": 16,
+    "hovers": true,
+    "suggestions": true,
+    "codeActions": true,
+    "validate": true,
+    "lint": {
+      "invalidScreen": "error",
+      "invalidVariant": "error",
+      "invalidTailwindDirective": "error",
+      "invalidApply": "error",
+      "invalidConfigPath": "error",
+      "cssConflict": "warning",
+      "recommendedVariantOrder": "warning"
+    },
+    "experimental": {
+      "configFile": null,
+      "classRegex": [
+        [
+          "def\\s+\\w+_class\\s*=\\s*(['\"`][^'\"`]*['\"`])",
+          "['\"`]([^'\"`]*)['\"`]"
+        ],
+        [
+          "def\\s+\\w+_class\\b[\\s\\S]*?%w\\[([\\s\\S]*?)\\][\\s\\S]*?end",
+          "(\\S+)"
+        ],
+        [
+          "def\\s+\\w+_class\\b[\\s\\S]*?\\[([\\s\\S]*?)\\][\\s\\S]*?end",
+          "['\"`]([^'\"`]*)['\"`]"
+        ]
+      ]
+    }
+  },
+  "eslint.debug": true,
+  "editor": {
+    "tabSize": 2,
+    "formatOnSave": true,
+    "formatOnSaveTimeout": 5000,
+    "codeActionsOnSave": {
+      "source.fixAll": "always",
+      "source.organizeImports": true
+    },
+    "insertSpaces": true,
+    "detectIndentation": false,
+    "rulers": [80, 120],
+    "wordWrap": "on",
+    "minimap": {
+      "enabled": false
+    }
+  }
+}

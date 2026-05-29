@@ -87,7 +87,7 @@ return {
             },
           },
         },
-        opts = { log_level = "DEBUG" },
+        -- opts = { log_level = "INFO" },
       }
       return opts
     end,

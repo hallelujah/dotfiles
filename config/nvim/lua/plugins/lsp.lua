@@ -92,11 +92,11 @@ end
 local ruby_server = "ruby_lsp"
 local ruby_server_cmd = cmd_path("ruby-lsp")
 
-if has_gem("solargraph") and vim.g.lazyvim_ruby_lsp and vim.g.lazyvim_ruby_lsp == "solargraph" then
-  ruby_server = "solargraph"
-  ruby_server_cmd = cmd_path("solargraph", "stdio")
-end
-vim.notify("ruby lsp server: " .. ruby_server, vim.log.levels.INFO)
+-- if vim.g.lazyvim_ruby_lsp and vim.g.lazyvim_ruby_lsp == "solargraph" and has_gem("solargraph") then
+--   ruby_server = "solargraph"
+--   ruby_server_cmd = cmd_path("solargraph", "stdio")
+-- end
+-- vim.notify("ruby lsp server: " .. ruby_server, vim.log.levels.INFO)
 
 return {
   {
@@ -120,7 +120,7 @@ return {
           cmd = ruby_server_cmd,
           enabled = true,
         },
-        [ruby_server == "solargraph" and "ruby_lsp" or "solargraph"] = { enabled = false },
+        -- [ruby_server == "solargraph" and "ruby_lsp" or "solargraph"] = { enabled = false },
 
         rubocop = {
           mason = false,

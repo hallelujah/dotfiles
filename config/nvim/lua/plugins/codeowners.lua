@@ -16,8 +16,8 @@ local function get_codeowners()
     return ""
   end
 
-  local owners = CO.matchFilesToCodeowner({ filepath })
-  if not owners then
+  local matched, owners = pcall(CO.matchFilesToCodeowner, { filepath })
+  if not matched or not owners then
     owners_cache[bufnr] = ""
     return ""
   end

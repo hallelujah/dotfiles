@@ -9,7 +9,7 @@ Run a semble code search and return concise, ranked results.
 
 Steps:
 
-1. Call `mcp__mcphub__semble__search` with:
+1. Call `mcp__semble__search` with:
    - `query`: the user's query above (verbatim)
    - `path`: the current working directory (`.`)
    - `top_k`: 8

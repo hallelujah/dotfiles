@@ -48,10 +48,6 @@ launchctl bootstrap "gui/$(id -u)" \
 
 Unload with `launchctl bootout "gui/$(id -u)/com.user.mcp-hub"`. Logs go to `/tmp/mcp-hub.{out,err}.log`.
 
-## Code Search (semble)
-
-Semble is exposed to all agents as `mcp__mcphub__semble__search` / `mcp__mcphub__semble__find_related` via the mcphub at `http://localhost:37373/mcp`. Registered in `config/mcphub/servers.json`; auto-installed/upgraded by `hooks/post-up` via `uv tool install --upgrade 'semble[mcp]'`.
-
 After editing `config/mcphub/servers.json`, restart the hub: `systemctl --user restart mcp-hub` (Linux) or `launchctl kickstart -k "gui/$(id -u)/com.user.mcp-hub"` (macOS).
 
 ## Guidelines

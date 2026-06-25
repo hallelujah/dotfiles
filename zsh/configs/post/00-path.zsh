@@ -10,3 +10,7 @@ export -U PATH
 if command -v mise >/dev/null; then
   eval "$(mise activate zsh)"
 fi
+
+if command -v worktree &>/dev/null; then
+  eval "$(worktree shell-init zsh)"
+fi

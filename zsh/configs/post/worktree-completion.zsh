@@ -1,0 +1,1 @@
+eval "$(worktree completion zsh)"

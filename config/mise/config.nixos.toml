@@ -1,2 +1,17 @@
 [settings]
-disable_tools = ["lua", "postgres", "tmux", "redis", "ruby", "node", "gem:ruby-lsp", "gem:ruby-lsp-rails"]
+disable_tools = [
+  "actionlint",
+  "gem:ruby-lsp",
+  "gem:ruby-lsp-rails",
+  "github:DarthSim/overmind",
+  "lua",
+  "minio",
+  "node",
+  "npm:@agentclientprotocol/claude-agent-acp",
+  "pnpm",
+  "postgres",
+  "redis",
+  "ruby",
+  "rust",
+  "tmux",
+]

@@ -8,7 +8,6 @@
 "npm:mcp-hub" = "latest"
 actionlint = "latest"
 ast-grep = "latest"
-btop = "latest"
 claude = "latest"
 claude-powerline = "latest"
 direnv = "latest"

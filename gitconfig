@@ -16,6 +16,15 @@
   pf = push --force-with-lease
   st = status
   dv = !nvim -c "DiffviewOpen"
+  lol = log --pretty=oneline --abbrev-commit --graph --decorate
+  lg = log -p
+  lo = log --graph --pretty=format:'%C(yellow)%h%Creset -%C(green)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+  br = branch
+  df = diff
+  fa = fetch --prune --all
+[include]
+  path = ~/.gitconfig.local
+
 [core]
   excludesfile = ~/.gitignore
   autocrlf = input
@@ -27,11 +36,6 @@
   prune = true
 [rebase]
   autosquash = true
-[include]
-  path = ~/.gitconfig.local
-[include]
-  path = ~/.gitconfig.work
-  path = ~/.gitconfig.personal
 [diff]
   colorMoved = zebra
 [pull]

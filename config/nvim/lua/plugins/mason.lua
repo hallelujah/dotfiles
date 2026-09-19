@@ -4,6 +4,7 @@ return {
     opts = function(_, opts)
       -- Add your required tools to the ensure_installed list
       opts.ensure_installed = opts.ensure_installed or {}
+      opts.PATH = "append"
       vim.list_extend(opts.ensure_installed, {
         "copilot-language-server",
         "prettier",

@@ -5,6 +5,7 @@
 "github:DarthSim/overmind" = "latest"
 "github:propitech/worktree-tools" = { version = "latest", exe = "worktree" }
 "npm:@agentclientprotocol/claude-agent-acp" = "latest"
+"npm:@caveman-ai/cli" = "latest"
 "npm:mcp-hub" = "latest"
 actionlint = "latest"
 ast-grep = "latest"
